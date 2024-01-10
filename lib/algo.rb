@@ -3,6 +3,9 @@ class Algo
 
     $arr = [10, 20, 30, 40, 50, 60, 70]
     $arr1 = [10, 120, 30, 140, 50, 160, 170]
+
+
+    # Sequential Search Entry
     def self.sequential_search
         
         l= $arr.length
@@ -19,6 +22,7 @@ class Algo
     end
 
 
+    # binary Search Entry
     def self.binary_search(x)
         n= $arr.length
         
@@ -34,6 +38,7 @@ class Algo
 
     end
 
+    # binary Search Recursion
     def self.binrec(arr, i, j, x)
         puts "#{arr} and #{x}, i #{i} , j #{j}"
         if i == j
@@ -49,7 +54,7 @@ class Algo
     end
 
 
-
+    # binary Search Iterator
     def self.biniter(x)
         n= $arr.length
         if n == 0 or x > $arr[n-1]
@@ -78,6 +83,7 @@ class Algo
 
      
 
+    #Fibonaci
 
     def self.fibo(n)
 
@@ -93,6 +99,24 @@ class Algo
 
 
 
+     # Entry Point to Quick Sort
+     def self.sort(arr)
+
+        puts "#{arr}"
+       
+        $arr1 =arr 
+        
+        p= 0
+        r= $arr1.length - 1
+        puts "Unsorted Array #{$arr1}  "
+        quick_sort($arr1, p, r)
+
+        puts "Sorted Array #{$arr1}  "
+
+
+    end
+
+
     def self.quick_sort(arr, p, r)
        # puts " inside quick_sort #{arr} and p is #{p} and r is #{r}"
         if p < r
@@ -103,7 +127,7 @@ class Algo
 
     end
 
-
+    # Quick Sort Partition function
     def self.partition(arr, p, r)
         #puts " inside partition #{arr} and p is #{p} and r is #{r}"
         x = $arr1[r]
@@ -132,21 +156,7 @@ class Algo
 
     end
 
-    def self.sort(arr)
-
-        puts "#{arr}"
-       
-        $arr1 =arr 
-        
-        p= 0
-        r= $arr1.length - 1
-        puts "Unsorted Array #{$arr1}  "
-        quick_sort($arr1, p, r)
-
-        puts "Sorted Array #{$arr1}  "
-
-
-    end
+   
 
 
     
