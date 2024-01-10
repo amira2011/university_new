@@ -1,0 +1,44 @@
+<div data-controller="students">
+
+
+
+<div class="container">
+<div class="row align-items-center" >
+    <div class="col">
+    <h3> Students Directory </h3>
+</div>
+
+<div class="row ">
+
+<table class="table table-bordered table-hover text-nowrap    table-responsive">
+        <thead>
+          <tr>
+            <th >Sr. No</th>
+            <th >Student Name</th>
+            <th >Student Email</th>
+          
+            <th >Action</th>
+          </tr>
+        </thead>
+        <tbody>
+
+        <%   @students.each do |student|  %>
+          <tr>
+            <th scope="row"><%=student.id %></th>
+            <td><%=student.name %></td>
+            <td><%=student.email %></td>
+           
+            <td>
+            
+           
+            <%= link_to "Show" , student_path(student.id), class: 'btn btn-primary ' %>
+            <%= link_to "Edit", edit_student_path(student.id), class: 'btn btn-primary' %>
+            <%= link_to "Delete", student_path(student.id), method: :delete, data: { confirm: 'Are you Sure?'} ,class: 'btn btn-primary' %>
+            </td>
+          </tr>
+        <% end  %>   
+        </tbody>
+</table>
+
+</div>
+</div>

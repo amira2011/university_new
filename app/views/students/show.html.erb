@@ -1,0 +1,33 @@
+<div class="container" >
+
+<div class="card" style="width: 18rem;">
+  
+  <div class="card-body">
+    <h5 class="card-title">Name :<%= @student.name %></h5>
+    <p class="card-text"><%= @student.email %></p>
+
+    <div class="card"  >
+    <h6 class="card-title">Course Enrolled</h6>
+    <ul class="list-group list-group-flush">
+
+    <% if  @student.courses.empty? %>
+    <li class="list-group-item"> None</li>
+   <% else %>
+     <% @student.courses.each do |course| %>
+
+    <li class="list-group-item"> <%= course.name %></li>
+    <% end %>
+    <% end %>
+  </ul>
+</div>
+
+    <%= link_to "Edit", edit_student_path(@student), class: 'btn btn-primary' %>
+    
+     
+  </div>
+</div>
+
+
+ 
+
+</div>

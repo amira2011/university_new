@@ -1,0 +1,57 @@
+<div data-controller="courses">
+
+
+    <div class="container">
+        <div class="row align-items-center" >
+            <div class="col">
+            <h3> Courses Listing </h3>
+        </div>
+
+        <div class="row ">
+
+        <table class="table table-bordered table-hover text-nowrap    table-responsive">
+                <thead>
+                  <tr>
+                    <th >Sr. No</th>
+                    <th >Short Name</th>
+                    <th >Name</th>
+                    <th >Description</th>
+                    <th >Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                <%   @courses.each do |course|  %>
+                  <tr>
+                    <th scope="row"><%=course.id %></th>
+                    <td><%=course.short_name %></td>
+                    <td><%=course.name %></td>
+                    <td><%=course.desc %></td>
+                    <% if current_user && !(current_user.courses.include?(course)) %>
+                    <td><%= link_to "Enroll", course_enroll_path(course_id: course.id ), method: :post ,  class: 'btn btn-primary' %></td>
+
+                    <% end %>
+                  </tr>
+                <% end  %>   
+                </tbody>
+</table>
+
+        </div>
+        
+
+     </div>
+
+
+
+
+
+ 
+  
+  
+
+
+
+
+   
+    
+  </div>
