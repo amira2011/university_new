@@ -6,6 +6,7 @@ require 'json'
 
 class Utils
 
+    $data = nil
     include Math1 
     @@count = 0
     attr_accessor :first_name, :last_name
@@ -54,11 +55,12 @@ class Utils
         res = Net::HTTP.get_response(uri)
         repos= res.body if res.is_a?(Net::HTTPSuccess)
         data = JSON.parse(repos)
+        puts data
         data.each do |repo| 
             arr.push(repo["full_name"])
         end
 
-        arr
+        data
 
 
     end

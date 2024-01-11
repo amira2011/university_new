@@ -2,6 +2,10 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="pages"
 export default class extends Controller {
+
+  
+  
+
   connect() {
 
     var repos;
@@ -78,6 +82,15 @@ export default class extends Controller {
         });
         $(".repo-info").show();
     }
+});
+
+
+$(document).on('click', '.repo-name1', function(e) {
+  e.preventDefault();
+  var id = $(this).data('repo-id');
+  $(".repo-info").show();
+   
+  console.log(id)
 });
 
 

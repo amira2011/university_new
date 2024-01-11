@@ -7,7 +7,6 @@ class Algo
 
     # Sequential Search Entry
     def self.sequential_search
-        
         l= $arr.length
         x= 20
         for i in 0..l do
@@ -15,7 +14,6 @@ class Algo
                 return i
            end
         end
-
         return -1
 
 
@@ -64,20 +62,13 @@ class Algo
         j= n-1
         while i < j 
             k = ( i + j ) / 2
-
             if x <= $arr[k] 
                 j = k
             else
                 i = k + 1               
-
             end
-
-
         end
-
         return i
-
-
     end
 
 
