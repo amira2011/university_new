@@ -3,7 +3,7 @@ Rails.application.routes.draw do
 
   root 'courses#index'
 
-
+  resources :pages
   resources :courses
   resources :students 
   
