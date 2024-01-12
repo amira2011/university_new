@@ -7,7 +7,7 @@ require 'json'
 class Utils
 
     $data = nil
-    include Math1 
+    include Math1
     @@count = 0
     attr_accessor :first_name, :last_name
 
@@ -35,7 +35,7 @@ class Utils
         return 25
     end
 
-  
+
     def use_math
 
        puts minus(10,20)
@@ -56,9 +56,9 @@ class Utils
         repos= res.body if res.is_a?(Net::HTTPSuccess)
         if repos
         data = JSON.parse(repos)
-        end 
+        end
         #puts data
-        data.each do |repo| 
+        data.each do |repo|
             arr.push(repo["full_name"])
         end
 
@@ -70,14 +70,29 @@ class Utils
     def self.get_languages(url)
         uri = URI(url)
         res = Net::HTTP.get_response(uri)
-        repos= res.body if res.is_a?(Net::HTTPSuccess)
+        data = res.body if res.is_a?(Net::HTTPSuccess)
         if repos
-        data = JSON.parse(repos)
+        jdata = JSON.parse(repos)
         end
     end
 
 
-     
+
+    def self.get_uri_data(url)
+        uri = URI(url)
+        res = Net::HTTP.get_response(uri)
+        repos= res.body if res.is_a?(Net::HTTPSuccess)
+        
+        if repos
+        data = JSON.parse(repos)
+        end
+
+        data  
+
+
+    end
+
+
+
+
 end
-
-
