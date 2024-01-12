@@ -1,4 +1,4 @@
-<div data-controller="pages">
+ 
 <nav class="navbar git-nav   ">
 <div class="custom-container">
     <a class="navbar-brand" href="javascript:;">
@@ -12,51 +12,37 @@
 
 <div class="container-fluid   border mt-5">
     <div class="row">
-
-
-    <div class="col-md-3 search-section">
-        <div class="username-label">
-            Username
-        </div>
-        <div class="row">
-            <div class="col-md-9">
-            <%= form_tag github_path, method: :get do %>
-                <%= text_field_tag :repo, params[:repo], id: 'username', class:'form-control' , placeholder:'Search by username' %> 
+        <div class="col-md-3 search-section">
+            <div class="username-label">
+                Username
             </div>
-            <div class="col-md-3">
-            <%= submit_tag "Search", class: 'btn btn-primary link' %>
-             <% end %>
+            <div class="row">
+                <div class="col-md-9">
+                    <%= form_tag github_path, method: :get do %>
+                    <%= text_field_tag :repo, params[:repo], id: 'username', class:'form-control' , placeholder:'Search by username' %> 
+                </div>
+                <div class="col-md-3">
+                    <%= submit_tag "Search", class: 'btn btn-primary link' %>
+                    <% end %>
+                </div>
             </div>
-        </div>
-        <div class="row   repo-list">
-            <i class="fa fa-spinner fa-spin hidden repos-fetch-spinner"></i>
-            <% if  @repos %>
+            <div class="row   repo-list">
+                <i class="fa fa-spinner fa-spin hidden repos-fetch-spinner"></i>
+                <% if  @repos %>
                 <%  @repos.each do |repo| %>
                 <div class='repo-name2'>
-                  <img src=" <%= repo["owner"]["avatar_url"] %> " class='avatar-url'></img>
-                  <%= link_to repo["full_name"] , page_path(repo["id"])%>   
+                    <img src=" <%= repo["owner"]["avatar_url"] %> " class='avatar-url'></img>
+                    <%= link_to repo["full_name"] , page_path(repo["id"])%>   
                   
-                  </div>
+                </div>
                 <% end %> 
                 <% end %>
+            </div>
         </div>
-    </div>
-
-
-
-         
-
- 
-       
-          
-          
-
-      
-
-       
-      <div class="col-md-9 info-section">
-        <div class="repo-info hidden">
-            <div id="repo-name"></div>
+           
+        <div class="col-md-9 info-section">
+        <div class="repo-info ">
+            <div id="repo-name"><%= @repo_name %> </div>
             <div class="card">
                 <div class="card-header">
                     <div>Overview</div>
@@ -122,14 +108,25 @@
                     <div class="col-md-6">
                         <div class="bold languages-title">Languages</div>
                         <div class="l-stats-body languages-body">
+                            <% if @languages %>
+                            <% @languages.each do |lang| %>
+                                <div> <%= lang[0] %> </div>
+                                
+                            <% end %>
+
+
+
+                            <% end %>
+
+
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="bold languages-title">Stats</div>
                         <div class="l-stats-body">
-                            <div><i class="fa fa-star"></i> <span class="stars-count"></span> stars</div>
-                            <div><i class="fa fa-eye"></i> <span class="watchers-count"></span> watchers</div>
-                            <div><i class="fa fa-code-fork"></i> <span class="forks-count"></span> forks</div>
+                            <div><i class="fa fa-star"></i> <span class="stars-count"></span><%= @stargazers_count %> stars</div>
+                            <div><i class="fa fa-eye"></i> <span class="watchers-count"></span> <%=  @watchers_count %> watchers</div>
+                            <div><i class="fa fa-code-fork"></i> <span class="forks-count"></span><%= @forks_count %> forks</div>
                         </div>
                     </div>
                 </div>
@@ -144,5 +141,8 @@
         </div>
     </div>
 
+
+    
     </div>
 </div>
+ 

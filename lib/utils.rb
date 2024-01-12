@@ -51,11 +51,13 @@ class Utils
     def self.get_git_repo(name)
 
         arr =Array.new
-        uri = URI('https://api.github.com/users/amira2011/repos')
+        uri = URI("https://api.github.com/users/#{name}/repos")
         res = Net::HTTP.get_response(uri)
         repos= res.body if res.is_a?(Net::HTTPSuccess)
+        if repos
         data = JSON.parse(repos)
-        puts data
+        end 
+        #puts data
         data.each do |repo| 
             arr.push(repo["full_name"])
         end
@@ -64,6 +66,16 @@ class Utils
 
 
     end
+
+    def self.get_languages(url)
+        uri = URI(url)
+        res = Net::HTTP.get_response(uri)
+        repos= res.body if res.is_a?(Net::HTTPSuccess)
+        if repos
+        data = JSON.parse(repos)
+        end
+    end
+
 
      
 end
