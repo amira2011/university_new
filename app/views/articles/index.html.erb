@@ -1,0 +1,20 @@
+<div data-controller="students">
+
+<%= link_to "New Article", new_article_path %>
+Our blog has <%= Article.public_count %> articles and counting!
+
+ 
+<h1>Articles</h1>
+
+<ul>
+  <% @articles.each do |article| %>
+     <% unless article.archived? %>
+    <li>
+      <%= link_to article.title , article , class: 'btn btn-link ' %>
+    </li>
+      <% end %>
+
+  <% end %>
+</ul>
+
+<div>

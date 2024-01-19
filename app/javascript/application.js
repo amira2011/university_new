@@ -13,3 +13,4 @@ import "./jquery_ui"
 
 
  
+ $(".notice").fadeOut(4000)

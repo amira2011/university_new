@@ -25,12 +25,9 @@
   </div>
 </nav>
  
-<% flash.each do |key, message| %>
- <div class="text-danger" id="fade-out">
-    <%=message%>
- 
-</div>
-  <% end %>
+<% if flash[:notice] %>
+  <div class="notice"><%= flash[:notice] %></div>
+<% end %>
  
 
   </div>

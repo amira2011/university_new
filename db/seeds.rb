@@ -8,36 +8,16 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
+require 'faker'
+ 
+ 
 
-Course.destroy_all
-Student.destroy_all
+ 10.times do 
+  article = Article.create(
+      title: Faker::Company.name, 
+      body: Faker::Quote.matz
 
-Course.create!([{
-  short_name: "CS111",
-  name: "Computer Science",
-  desc: "Brief Info About Computer Science"
+   )
+
   
-},
-{
-    short_name: "CS112",
-  name: "Data Structure",
-  desc: "Brief Info About Data Structure"
-},
-{
-    short_name: "CS113",
-    name: "Algoruthm Science",
-    desc: "Brief Info About Computer Algorithm"
-}])
-
-Student.create!([{
-  
-  name: "Abid",
-  email: "shaikh.abidali@gmail.com",
-  password: "password"
-},
-{
-  name: "Demo",
-  email: "demo.uni@gmail.com",
-  password: "password"
-},
- ])
+end
