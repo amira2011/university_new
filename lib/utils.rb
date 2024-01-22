@@ -79,19 +79,31 @@ class Utils
 
 
     def self.get_uri_data(url)
-        uri = URI(url)
-        res = Net::HTTP.get_response(uri)
-        repos= res.body if res.is_a?(Net::HTTPSuccess)
-        
-        if repos
-        data = JSON.parse(repos)
+        begin
+          uri = URI(url)
+          res = Net::HTTP.get_response(uri)
+    
+          if res.is_a?(Net::HTTPSuccess)
+            repos = res.body
+            data = JSON.parse(repos)
+          else
+            puts "Error: #{res.code} - #{res.message}"
+            data = nil
+          end
+    
+        rescue URI::InvalidURIError => e
+          puts "Invalid URI: #{e.message}"
+          data = nil
+        rescue JSON::ParserError => e
+          puts "Error parsing JSON: #{e.message}"
+          data = nil
+        rescue StandardError => e
+          puts "An unexpected error occurred: #{e.message}"
+          data = nil
         end
-
-        data  
-
-
-    end
-
+    
+        data
+      end
 
 
 
