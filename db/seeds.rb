@@ -12,12 +12,16 @@ require 'faker'
  
  
 
- 10.times do 
-  article = Article.create(
-      title: Faker::Company.name, 
-      body: Faker::Quote.matz
+  
 
-   )
+  
+     100.times do 
+      Course.create(
+      short_name: Faker::Educator.subject,
+      name: Faker::Educator.course_name, 
+      desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}"
+      )
+      
 
   
 end

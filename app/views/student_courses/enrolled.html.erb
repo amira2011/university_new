@@ -1,0 +1,43 @@
+<div data-controller="courses">
+
+
+    <div class="container">
+        <div class="row align-items-center" >
+            <div class="col">
+            <h3> Enrolled Courses </h3>
+        </div>
+
+        <div class="row ">
+
+        <table class="table table-bordered table-hover text-nowrap    table-responsive">
+                <thead>
+                  <tr>
+                    <th >Sr. No</th>
+                    <th >Short Name</th>
+                    <th >Name</th>
+                    <th >Student</th>
+                    <th >Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+
+                <%   @sc.each do |sc|  %>
+                  <tr>
+                    <td scope="row"><%=sc.course.id %></td>
+                    <td><%=sc.course.short_name %></td>
+                    <td><%=sc.course.name %></td>
+                    <td><%=sc.student.name %></td>
+                    
+                  </tr>
+                <% end  %>   
+                </tbody>
+</table>
+
+        </div>
+        
+
+     </div>
+
+  
+    
+  </div>

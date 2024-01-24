@@ -1,5 +1,7 @@
 class ArticlesController <  ApplicationController
 
+    before_action :set_article, only: [:edit, :show, :update, :destroy]
+
     http_basic_authenticate_with name: "abid", password: "password", except: [:index, :show]
     
     def index
@@ -7,7 +9,12 @@ class ArticlesController <  ApplicationController
     end
 
     def show
-        @article = Article.find(params[:id])
+
+      respond_to do |format|
+        format.html # show.html.erb
+        format.json { render json: @article }
+      end
+      
     end
 
     def new
@@ -25,12 +32,10 @@ class ArticlesController <  ApplicationController
       end
 
     def edit
-        @article = Article.find(params[:id])
-    end
+     end
     
     def update
-        @article = Article.find(params[:id])
-    
+     
         if @article.update(article_params)
           redirect_to articles_path 
         else
@@ -39,8 +44,7 @@ class ArticlesController <  ApplicationController
     end
     
     def destroy
-        @article = Article.find(params[:id])
-        @article.destroy
+         @article.destroy
     
         redirect_to articles_path, status: :see_other
       end
@@ -52,5 +56,12 @@ class ArticlesController <  ApplicationController
         params.require(:article).permit(:title, :body , :status)
     end
 
+    def set_article
+      begin
+      @article = Article.find(params[:id])
+      rescue ActiveRecord::RecordNotFound
+        redirect_to articles_path, notice: 'Article does not exist.'
+      end
+    end
 
 end

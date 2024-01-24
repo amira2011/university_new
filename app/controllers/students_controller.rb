@@ -51,10 +51,12 @@ end
 
 def create
  
-@student= Student.new(student_params)
+    @student= Student.new(student_params)
     if @student.save 
+        UserMailer.welcome_email(@student).deliver_now
+
         flash[:success]="You have Successfully Signed Up"
-        redirect_to root_path
+        #redirect_to root_path
 
      else
         render 'new', status: :unprocessable_entity

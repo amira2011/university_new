@@ -15,6 +15,10 @@
 
   <%= render 'layouts/navigation' %>
 
+  <% flash.each do |name, msg| -%>
+    <%= content_tag :div, msg, class: name %>
+  <% end -%>
+
  <div class="container-fluid">
    <%= yield %>
 </div>

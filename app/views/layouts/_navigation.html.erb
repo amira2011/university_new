@@ -8,7 +8,7 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-        <%= link_to 'Courses', root_path ,:class => "nav-link active"  %>
+        <%= link_to 'Courses', courses_path ,:class => "nav-link active"  %>
         </li>
 
        
@@ -25,9 +25,7 @@
   </div>
 </nav>
  
-<% if flash[:notice] %>
-  <div class="notice"><%= flash[:notice] %></div>
-<% end %>
+ 
  
 
   </div>

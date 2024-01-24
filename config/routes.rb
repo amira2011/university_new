@@ -1,7 +1,7 @@
 Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
-  root 'courses#index'
+  root 'articles#index'
 
   resources :pages
   resources :courses
@@ -22,4 +22,5 @@ Rails.application.routes.draw do
   delete 'logout', to: 'logins#destroy'
 
   post 'course_enroll', to: 'student_courses#create'
+  get 'enrolled', to: 'student_courses#enrolled'
 end
