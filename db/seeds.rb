@@ -12,16 +12,17 @@ require 'faker'
  
  
 
-  
-
-  
-     100.times do 
-      Course.create(
-      short_name: Faker::Educator.subject,
-      name: Faker::Educator.course_name, 
-      desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}"
+   100.times do |i|
+      Student.create!(
+        name: Faker::Name.name,
+        email: Faker::Internet.email,
+        age: rand(18..25),
+        category: ["open", "obc", "sc", "nt", "st", "other"].sample,
+        enrolled: [true, false].sample,
+        password: "password"
       )
-      
+     
 
   
 end
+ 
