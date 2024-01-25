@@ -107,4 +107,26 @@ class Utils
 
 
 
+      def self.check_input_type(input)
+        case input
+        when Hash
+          return "Input is a Hash"
+        when String
+          return "Input is a String"
+        when Array
+          return "Input is an Array"
+        when JSON
+          begin
+            JSON.parse(input)
+            return "Input is a valid JSON"
+          rescue JSON::ParserError
+            return "Input is not a valid JSON"
+          end
+        else
+          return "Input is of unknown type"
+        end
+      end
+
+
+
 end
