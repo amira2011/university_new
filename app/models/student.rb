@@ -18,10 +18,15 @@ class Student < ApplicationRecord
 
     def self.search_student(args)
         begin
-            arguments = JSON.parse(args)
-            puts "JSON arguments: #{arguments}"
-            
-           
+            args = JSON.parse(args)
+            puts "JSON arguments: #{args.keys}"
+
+            puts "#{Student.column_names}"
+            #puts "#{Student.column_names.map(&:to_sym)}"
+            valid_keys = args.select { |key, _| Student.column_names.map(&:to_sym).include?(key.to_sym) }
+            puts "#{valid_keys}"
+            conditions = valid_keys.map { |key, value| "#{key} = '#{value}'" }.join(' OR ')
+            @search_results = Student.where(conditions)
             
           rescue JSON::ParserError => e
             puts "Error parsing JSON: #{e.message}"
