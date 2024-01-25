@@ -16,7 +16,7 @@ class Student < ApplicationRecord
     has_many :student_courses
     has_many :courses , :through => :student_courses
 
-    def self.search_all(args)
+    def self.get_students(args)
         begin
             puts args.class
             args = JSON.parse(args)
@@ -28,34 +28,37 @@ class Student < ApplicationRecord
             @search_results = Student.where(conditions)
             return @search_results
         rescue JSON::ParserError => e
-            puts "Error parsing JSON: #{e.message}"
+            puts "Error parsing JSON in Get Student : #{e.message}"
+            Student.where("lower(name) LIKE ? OR lower(email) LIKE ? OR lower(category) LIKE ?  OR lower(age) LIKE ?", "#{args.downcase}%", "#{args.downcase}%" ,"#{args.downcase}%", "#{args.downcase}%" )
         end
 
     end
 
     def self.search_student(input)
         if input.is_a?(Hash)
-          puts "Input is a Hash"
-          json_output = input.to_json
-          self.search_all(json_output)
+            puts "Input is a Hash"
+            json_output = input.to_json
+            self.get_students(json_output)
           
         elsif input.is_a?(String)
             puts "Input is a String"
             begin
             input  = JSON.parse(input)
             input = input.to_json
-            self.search_all(input)
+            self.get_students(input)
             rescue JSON::ParserError => e
-                puts "Error parsing JSON: #{e.message}"
+              puts "Error parsing JSON in Seach: #{e.message}"
+              input =  input.split(/[,:&=]/).map(&:strip).map(&:downcase)
+              students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
             end
-
-          
         elsif input.is_a?(Array)
-          return "Input is an Array"
+            puts "Input is an Array"
+            input = input.map(&:downcase)
+            students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
         elsif input.is_a?(JSON)
-            self.search_student(input)
+            self.get_students(input)
         else
-          return "Input is of unknown type"
+            return "Input is of unknown type"
         end
       end
 
