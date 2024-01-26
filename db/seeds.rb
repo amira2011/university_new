@@ -21,8 +21,33 @@ require 'faker'
         enrolled: [true, false].sample,
         password: "password"
       )
-     
+    end
 
-  
-end
+    100.times do 
+      Course.create(
+        short_name: Faker::Educator.subject,
+        name: Faker::Educator.course_name, 
+        desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}"
+      )
+    end
+
+    Student.all.each do |student|
+      StudentDetail.create(student_id: student.id,
+        address: Faker::Address.city,
+        zip: Faker::Address.zip,
+        emergency_contact: Faker::PhoneNumber.phone_number
+      )
+     
+    end
+      
+      
+
+
+
+      # Randomly Allocate Student to Courses
+      # run Util.add_students_to_courses 
+      #
+ 
+ 
+
  

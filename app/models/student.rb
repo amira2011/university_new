@@ -12,19 +12,15 @@ class Student < ApplicationRecord
               format: { with: VALID_EMAIL_REGEX }
 
     has_secure_password          
-
+    has_one :student_detail
     has_many :student_courses
     has_many :courses , :through => :student_courses
 
     def self.get_students(args)
         begin
-            puts args.class
             args = JSON.parse(args)
-            puts "JSON arguments: #{args.keys}"
-            puts "#{Student.column_names}"
             valid_keys = args.select { |key, _| Student.column_names.map(&:to_sym).include?(key.to_sym) }
-            puts "#{valid_keys}"
-            conditions = valid_keys.map { |key, value| "#{key} = '#{value}'" }.join(' OR ')
+            conditions = valid_keys.map { |key, value| "#{key} LIKE '%#{value}%'" }.join(' OR ')
             @search_results = Student.where(conditions)
             return @search_results
         rescue JSON::ParserError => e
@@ -36,12 +32,10 @@ class Student < ApplicationRecord
 
     def self.search_student(input)
         if input.is_a?(Hash)
-            puts "Input is a Hash"
             json_output = input.to_json
             self.get_students(json_output)
           
         elsif input.is_a?(String)
-            puts "Input is a String"
             begin
             input  = JSON.parse(input)
             input = input.to_json
@@ -52,7 +46,6 @@ class Student < ApplicationRecord
               students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
             end
         elsif input.is_a?(Array)
-            puts "Input is an Array"
             input = input.map(&:downcase)
             students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
         elsif input.is_a?(JSON)
@@ -62,6 +55,73 @@ class Student < ApplicationRecord
         end
       end
 
+
+      def self.get_students_by_course(input)
+        begin
+            result=[]
+            input = JSON.parse(input)
+            valid_keys = input.select { |key, _| Course.column_names.map(&:to_sym).include?(key.to_sym) }
+            conditions = valid_keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' OR ')
+            courses = Course.where(conditions)
+            courses.each do |course|
+                enrolled_students = course.students.includes(:student_detail)
+                enrolled_students.each do |student|
+                    record = {
+                        course: course,
+                        student: student,
+                        student_detail: student.student_detail
+                    }
+                    result << record
+                end
+            end
+            return result
+        rescue JSON::ParserError => e
+            puts "Error parsing JSON in Get Student : #{e.message}"
+            
+        end
+    end
+
+
+    def self.get_students_by_details(input)
+        result =[]
+        begin
+            if input.is_a?(Hash)
+                input = input.to_json
+            end
+            input = JSON.parse(input)
+            valid_keys = input.select { |key, _| StudentDetail.column_names.map(&:to_sym).include?(key.to_sym) }
+            conditions = valid_keys.map { | key , value | "#{key} like '%#{value}%'"}.join(' OR ') 
+            student_details = StudentDetail.where(conditions).includes(student: :courses)
+            student_details.each do |student_detail|
+                student = student_detail.student
+                record = {
+                  student: student,
+                  student_detail: student_detail,
+                  courses: student.courses
+                }
+                result << record
+              end
+            return result
+        rescue JSON::ParserError => e
+            puts "Error Parsing JSON #{e.message}"
+        end
+    end
+    
+
+    def self.print_record(result)
+        result.each do |record|
+            puts "Student Name: #{record[:student].name}"
+            puts "Student Email: #{record[:student].email}"
+            puts "Address: #{record[:student_detail].address}"
+            puts "Zip: #{record[:student_detail].zip}"
+            puts "Emergency Contact: #{record[:student_detail].emergency_contact}"
+            # Display courses associated with the student
+            record[:courses].each do |course|
+              puts "Enrolled in Course: #{course.name}"
+            end
+            puts "\n"
+          end
+    end
 
 
 end

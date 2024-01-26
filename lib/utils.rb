@@ -129,4 +129,17 @@ class Utils
 
 
 
+      def self.add_students_to_courses
+        courses = Course.all.to_a
+        students = Student.all.to_a
+                
+        students.each do |student|
+          Course.all.sample(20).each do |course|
+            StudentCourse.create(course: course, student: student)
+          end
+        end
+      end
+
+
+
 end
