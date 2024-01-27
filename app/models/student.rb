@@ -26,9 +26,13 @@ class Student < ApplicationRecord
             course_conditions = build_conditions(input, Course)
             student_detail_conditions = build_conditions(input, StudentDetail)
             student_conditions = build_conditions(input, Student)
+            # students = Student.left_joins(:student_detail, :courses).where("#{course_conditions} OR #{student_detail_conditions} OR #{student_conditions}").distinct
             students = Student.left_joins(:student_detail, :courses)
-            .where("#{course_conditions} OR #{student_detail_conditions} OR #{student_conditions}").distinct
-            return students
+            # Check if conditions are present before adding to the query
+            students = students.where("#{course_conditions}") unless course_conditions.blank?
+            students = students.where("#{student_detail_conditions}") unless student_detail_conditions.blank?
+            students = students.where("#{student_conditions} ") unless student_conditions.blank?
+            return students.distinct
         rescue JSON::ParserError => e
             puts "Error Parsing JSON #{e.message}"
         end
@@ -39,7 +43,7 @@ class Student < ApplicationRecord
         students = get_students(input)
         result = {}
         students.each do |student|
-            courses = student.courses.distinct.pluck(:id) # Assuming 'id' is the attribute you want to retrieve
+            courses = student.courses.distinct.pluck(:id) 
             result[student.id.to_s] = { "courses" => courses }
         end
         return result
