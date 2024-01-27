@@ -26,7 +26,7 @@ require 'faker'
     100.times do 
       Course.create(
         short_name: Faker::Educator.subject,
-        name: Faker::Educator.course_name, 
+        course_name: Faker::Educator.course_name, 
         desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}"
       )
     end
