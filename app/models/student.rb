@@ -124,4 +124,56 @@ class Student < ApplicationRecord
     end
 
 
+    def self.get_students_new(input)
+
+        begin
+            result=[]
+            input = JSON.parse(input)
+
+            course_keys = input.select { |key, _| Course.column_names.map(&:to_sym).include?(key.to_sym) }
+            course_conditions = course_keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' AND ')
+
+            student_detail_keys = input.select { |key, _| StudentDetail.column_names.map(&:to_sym).include?(key.to_sym) }
+            student_detail_conditions = student_detail_keys.map { | key , value | "#{key} like '%#{value}%'"}.join(' AND ') 
+
+            student_keys = input.select { |key, _| Student.column_names.map(&:to_sym).include?(key.to_sym) }
+            student_conditions = student_keys.map { |key, value| "#{key} LIKE '%#{value}%'" }.join(' AND ')
+
+            students = Student.joins(:student_detail, :courses).where(course_conditions).where(student_detail_conditions).where(student_conditions)
+
+            students.each do |student|
+            record = {
+            student: student,
+            student_detail: student.student_detail,
+            courses: student.courses
+            }
+            result << record
+            end
+
+           return result
+
+
+        rescue JSON::ParserError => e
+            puts "Error Parsing JSON #{e.message}"
+            students = Student.joins(:student_detail, :courses)
+            .where("lower(short_name) IN (?) OR lower(course_name) IN (?) OR lower(desc) IN (?)", input, input, input)
+            .where("lower(address) IN (?) OR lower(zip) IN (?) OR lower(emergency_contact) IN (?)", input, input, input)
+            .where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
+            
+            students.each do |student|
+                record = {
+                  student: student,
+                  student_detail: student.student_detail,
+                  courses: student.courses
+                }
+                result << record
+            end
+            return result
+        end
+
+
+
+    end
+
+
 end
