@@ -16,164 +16,39 @@ class Student < ApplicationRecord
     has_many :student_courses
     has_many :courses , :through => :student_courses
 
-    def self.get_students(args)
-        begin
-            args = JSON.parse(args)
-            valid_keys = args.select { |key, _| Student.column_names.map(&:to_sym).include?(key.to_sym) }
-            conditions = valid_keys.map { |key, value| "#{key} LIKE '%#{value}%'" }.join(' OR ')
-            @search_results = Student.where(conditions)
-            return @search_results
-        rescue JSON::ParserError => e
-            puts "Error parsing JSON in Get Student : #{e.message}"
-            Student.where("lower(name) LIKE ? OR lower(email) LIKE ? OR lower(category) LIKE ?  OR lower(age) LIKE ?", "#{args.downcase}%", "#{args.downcase}%" ,"#{args.downcase}%", "#{args.downcase}%" )
-        end
-
-    end
-
-    def self.search_student(input)
-        if input.is_a?(Hash)
-            json_output = input.to_json
-            self.get_students(json_output)
-          
-        elsif input.is_a?(String)
-            begin
-            input  = JSON.parse(input)
-            input = input.to_json
-            self.get_students(input)
-            rescue JSON::ParserError => e
-              puts "Error parsing JSON in Seach: #{e.message}"
-              input =  input.split(/[,:&=]/).map(&:strip).map(&:downcase)
-              students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
-            end
-        elsif input.is_a?(Array)
-            input = input.map(&:downcase)
-            students = Student.where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
-        elsif input.is_a?(JSON)
-            self.get_students(input)
-        else
-            return "Input is of unknown type"
-        end
-      end
-
-
-      def self.get_students_by_course(input)
-        begin
-            result=[]
-            input = JSON.parse(input)
-            valid_keys = input.select { |key, _| Course.column_names.map(&:to_sym).include?(key.to_sym) }
-            conditions = valid_keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' OR ')
-            courses = Course.where(conditions)
-            courses.each do |course|
-                enrolled_students = course.students.includes(:student_detail)
-                enrolled_students.each do |student|
-                    record = {
-                        course: course,
-                        student: student,
-                        student_detail: student.student_detail
-                    }
-                    result << record
-                end
-            end
-            return result
-        rescue JSON::ParserError => e
-            puts "Error parsing JSON in Get Student : #{e.message}"
-            
-        end
-    end
-
-
-    def self.get_students_by_details(input)
-        result =[]
+   
+    def self.get_students(input)
         begin
             if input.is_a?(Hash)
                 input = input.to_json
             end
             input = JSON.parse(input)
-            valid_keys = input.select { |key, _| StudentDetail.column_names.map(&:to_sym).include?(key.to_sym) }
-            conditions = valid_keys.map { | key , value | "#{key} like '%#{value}%'"}.join(' OR ') 
-            student_details = StudentDetail.where(conditions).includes(student: :courses)
-            student_details.each do |student_detail|
-                student = student_detail.student
-                record = {
-                  student: student,
-                  student_detail: student_detail,
-                  courses: student.courses
-                }
-                result << record
-              end
-            return result
+            course_conditions = build_conditions(input, Course)
+            student_detail_conditions = build_conditions(input, StudentDetail)
+            student_conditions = build_conditions(input, Student)
+            students = Student.left_joins(:student_detail, :courses)
+            .where("#{course_conditions} OR #{student_detail_conditions} OR #{student_conditions}").distinct
+            return students
         rescue JSON::ParserError => e
             puts "Error Parsing JSON #{e.message}"
         end
     end
-    
-
-    def self.print_record(result)
-        result.each do |record|
-            puts "Student Name: #{record[:student].name}"
-            puts "Student Email: #{record[:student].email}"
-            puts "Address: #{record[:student_detail].address}"
-            puts "Zip: #{record[:student_detail].zip}"
-            puts "Emergency Contact: #{record[:student_detail].emergency_contact}"
-            # Display courses associated with the student
-            record[:courses].each do |course|
-              puts "Enrolled in Course: #{course.name}"
-            end
-            puts "\n"
-          end
-    end
 
 
-    def self.get_students_new(input)
-
-        begin
-            result=[]
-            input = JSON.parse(input)
-
-            course_keys = input.select { |key, _| Course.column_names.map(&:to_sym).include?(key.to_sym) }
-            course_conditions = course_keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' AND ')
-
-            student_detail_keys = input.select { |key, _| StudentDetail.column_names.map(&:to_sym).include?(key.to_sym) }
-            student_detail_conditions = student_detail_keys.map { | key , value | "#{key} like '%#{value}%'"}.join(' AND ') 
-
-            student_keys = input.select { |key, _| Student.column_names.map(&:to_sym).include?(key.to_sym) }
-            student_conditions = student_keys.map { |key, value| "#{key} LIKE '%#{value}%'" }.join(' AND ')
-
-            students = Student.joins(:student_detail, :courses).where(course_conditions).where(student_detail_conditions).where(student_conditions)
-
-            students.each do |student|
-            record = {
-            student: student,
-            student_detail: student.student_detail,
-            courses: student.courses
-            }
-            result << record
-            end
-
-           return result
-
-
-        rescue JSON::ParserError => e
-            puts "Error Parsing JSON #{e.message}"
-            students = Student.joins(:student_detail, :courses)
-            .where("lower(short_name) IN (?) OR lower(course_name) IN (?) OR lower(desc) IN (?)", input, input, input)
-            .where("lower(address) IN (?) OR lower(zip) IN (?) OR lower(emergency_contact) IN (?)", input, input, input)
-            .where("lower(name) IN (?) OR lower(email) IN (?) OR lower(category) IN (?) OR age IN (?) OR enrolled IN (?)", input, input, input, input, input)
-            
-            students.each do |student|
-                record = {
-                  student: student,
-                  student_detail: student.student_detail,
-                  courses: student.courses
-                }
-                result << record
-            end
-            return result
+    def self.get_students_hash(input)
+        students = get_students(input)
+        result = {}
+        students.each do |student|
+            courses = student.courses.distinct.pluck(:id) # Assuming 'id' is the attribute you want to retrieve
+            result[student.id.to_s] = { "courses" => courses }
         end
-
-
-
+        return result
     end
 
+
+    def self.build_conditions(input, model)
+        keys = input.select { |key, _| model.column_names.map(&:to_sym).include?(key.to_sym) }
+        conditions = keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' OR ')
+    end
 
 end
