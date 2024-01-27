@@ -80,14 +80,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_27_074926) do
     t.index ["document_id"], name: "index_sections_on_document_id"
   end
 
-  create_table "student_courses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-    t.bigint "student_id"
-    t.bigint "course_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["course_id"], name: "index_student_courses_on_course_id"
-    t.index ["student_id"], name: "index_student_courses_on_student_id"
-  end
+    create_table "student_courses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+      t.bigint "student_id"
+      t.bigint "course_id"
+      t.datetime "created_at", null: false
+      t.datetime "updated_at", null: false
+      t.index ["course_id"], name: "index_student_courses_on_course_id"
+      t.index ["student_id"], name: "index_student_courses_on_student_id"
+    end
 
   create_table "student_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "student_id", null: false
