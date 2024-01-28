@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_01_27_074926) do
+ActiveRecord::Schema[7.1].define(version: 2024_01_28_174846) do
   create_table "articles", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.string "title"
     t.text "body"
@@ -80,14 +80,14 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_27_074926) do
     t.index ["document_id"], name: "index_sections_on_document_id"
   end
 
-    create_table "student_courses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
-      t.bigint "student_id"
-      t.bigint "course_id"
-      t.datetime "created_at", null: false
-      t.datetime "updated_at", null: false
-      t.index ["course_id"], name: "index_student_courses_on_course_id"
-      t.index ["student_id"], name: "index_student_courses_on_student_id"
-    end
+  create_table "student_courses", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
+    t.bigint "student_id"
+    t.bigint "course_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["course_id"], name: "index_student_courses_on_course_id"
+    t.index ["student_id"], name: "index_student_courses_on_student_id"
+  end
 
   create_table "student_details", charset: "utf8mb4", collation: "utf8mb4_0900_ai_ci", force: :cascade do |t|
     t.bigint "student_id", null: false
@@ -96,7 +96,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_27_074926) do
     t.string "emergency_contact"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address"], name: "index_student_details_on_address"
+    t.index ["emergency_contact"], name: "index_student_details_on_emergency_contact"
     t.index ["student_id"], name: "index_student_details_on_student_id"
+    t.index ["zip"], name: "index_new_on_zip"
     t.index ["zip"], name: "index_student_details_on_zip"
   end
 
@@ -109,7 +112,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_01_27_074926) do
     t.integer "age"
     t.string "category"
     t.boolean "enrolled"
+    t.string "address"
+    t.index ["category"], name: "index_new_on_category"
     t.index ["category"], name: "index_students_on_category"
+    t.index ["email"], name: "index_new_on_email"
     t.index ["email"], name: "index_students_on_email"
   end
 

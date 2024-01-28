@@ -52,7 +52,7 @@ class Student < ApplicationRecord
 
     def self.build_conditions(input, model)
         keys = input.select { |key, _| model.column_names.map(&:to_sym).include?(key.to_sym) }
-        conditions = keys.map { |key, value| "#{key} like '%#{value}%'" }.join(' OR ')
+        conditions = keys.map { |key, value| "#{model.table_name}.#{key} like '%#{value}%'" }.join(' OR ')
     end
 
 end
