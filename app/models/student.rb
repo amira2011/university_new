@@ -29,9 +29,11 @@ class Student < ApplicationRecord
             # students = Student.left_joins(:student_detail, :courses).where("#{course_conditions} OR #{student_detail_conditions} OR #{student_conditions}").distinct
             students = Student.left_joins(:student_detail, :courses)
             # Check if conditions are present before adding to the query
-            students = students.where("#{course_conditions}") unless course_conditions.blank?
-            students = students.where("#{student_detail_conditions}") unless student_detail_conditions.blank?
-            students = students.where("#{student_conditions} ") unless student_conditions.blank?
+            combined_conditions = [student_conditions, student_detail_conditions, course_conditions].reject(&:blank?).join(' OR ')
+            students = students.where(combined_conditions) unless combined_conditions.blank?
+            #students = students.where("#{course_conditions}") unless course_conditions.blank?
+            #students = students.where("#{student_detail_conditions}") unless student_detail_conditions.blank?
+            #students = students.where("#{student_conditions} ") unless student_conditions.blank?
             return students.distinct
         rescue JSON::ParserError => e
             puts "Error Parsing JSON #{e.message}"
@@ -53,6 +55,8 @@ class Student < ApplicationRecord
     def self.build_conditions(input, model)
         keys = input.select { |key, _| model.column_names.map(&:to_sym).include?(key.to_sym) }
         conditions = keys.map { |key, value| "#{model.table_name}.#{key} like '%#{value}%'" }.join(' OR ')
+
+        
     end
 
 end
