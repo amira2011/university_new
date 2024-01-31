@@ -1,3 +1,13 @@
+<i class="fa-solid fa-refresh fa-2xl fa-spin"></i>
+
+<i class="fa-solid fa-gem fa-rotate-180"></i>
+
+<i class="fa-solid fa-gem fa-rotate-by" style="color: green; --fa-rotate-angle: 45deg"></i>
+
+<i class="fa-brands fa-youtube" style="color: red;"></i>
+
+<i class="fa-regular fa-bell fa-beat"></i>
+
 <div data-controller="courses">
 
 
@@ -25,7 +35,7 @@
                   <tr>
                     <th scope="row"><%=course.id %></th>
                     <td><%=course.short_name %></td>
-                    <td><%=course.name %></td>
+                    <td><%=course.course_name %></td>
                     <td><%=course.desc %></td>
                     <% if current_user && !(current_user.courses.include?(course)) %>
                     <td><%= link_to "Enroll", course_enroll_path(course_id: course.id ), method: :post ,  class: 'btn btn-primary' %></td>
@@ -55,3 +65,4 @@
    
     
   </div>
+
