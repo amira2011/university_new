@@ -44,6 +44,14 @@ gem "bootstrap"
 gem "sassc-rails"
 
 
+gem 'libv8'
+
+gem 'nokogiri', '1.16.0', :require => false
+
+gem 'kaminari'
+
+gem 'bootstrap5-kaminari-views'
+
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
 

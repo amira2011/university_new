@@ -1,4 +1,5 @@
 class Student < ApplicationRecord
+    paginates_per 10
     before_save { self.email = email.downcase }
 
     VALID_CATEGORIES = ["open", "obc", "sc", "nt", "st", "other"]

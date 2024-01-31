@@ -1,7 +1,7 @@
 class StudentsController < ApplicationController
 layout 'admin'
 def index
-@students= Student.all
+@students= Student.all.page(params[:page])
 end
 
 def new
