@@ -10,8 +10,10 @@ import "jquery"
 import "jquery_ujs"
 import "./jquery_ui"
 import "bootstrap"
+import "./plugins/sb-admin-2"
 console.log($); // ok
-console.log("ok"); // ok
+console.log("hi abid"); // ok
+
  
 $(".notice").fadeOut(4000)
  

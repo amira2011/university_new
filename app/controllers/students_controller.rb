@@ -1,5 +1,5 @@
 class StudentsController < ApplicationController
-
+layout 'admin'
 def index
 @students= Student.all
 end
