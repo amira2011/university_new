@@ -2,7 +2,7 @@
  
 
 <!-- Content Row -->
-<div class="row">
+<div class="row" data-controller="students">
        
   <!-- Student Table-->
     <div class="card shadow m-4">
@@ -38,7 +38,7 @@
             <tbody>
               <% @students.each_with_index do |student, idx|  %>
               <tr>
-                <th scope="row"><%= idx+1 %></th>
+                <td scope="row"><%= idx+1 %></td>
                 <td><%=student.name %></td>
                 <td><%=student.email %></td>
                 <td><%=student.category %></td>

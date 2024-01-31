@@ -1,6 +1,10 @@
 (function($) {
   "use strict"; // Start of use strict
 console.log("in admin js")
+
+$('#dataTable').DataTable();
+
+
   // Toggle the side navigation
   $("#sidebarToggle, #sidebarToggleTop").on('click', function(e) {
     $("body").toggleClass("sidebar-toggled");
