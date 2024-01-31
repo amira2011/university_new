@@ -1,49 +1,70 @@
-<div data-controller="students">
 
+ 
 
+<!-- Content Row -->
+<div class="row">
+       
+  <!-- Student Table-->
+    <div class="card shadow m-4">
+      <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Students</h6>
+      </div>
+      <div class="card-body">
+        <div class="table-responsive">
+          <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <thead>
+              <tr>
+                <th >Sr. No</th>
+                <th >Student Name</th>
+                <th >Student Email</th>
+                <th >Category</th>
+                <th >Age</th>
+                <th >Enrolled</th>
+                <th >Action</th>
+              </tr>
+            </thead>
+            <tfoot>
+              <tr>
+                <th >Sr. No</th>
+                <th >Student Name</th>
+                <th >Student Email</th>
+                <th >Category</th>
+                <th >Age</th>
+                <th >Enrolled</th>
+                <th >Action</th>
+              </tr>
+            </tfoot>
+            <tbody>
+              <% @students.each_with_index do |student, idx|  %>
+              <tr>
+                <th scope="row"><%= idx+1 %></th>
+                <td><%=student.name %></td>
+                <td><%=student.email %></td>
+                <td><%=student.category %></td>
+                <td><%=student.age %></td>
+                <td><%=student.enrolled %></td>
+                <td>
+                  <%= link_to "Show" , student_path(student.id), class: 'btn btn-primary ' %>
+                  <%= link_to "Edit", edit_student_path(student.id), class: 'btn btn-primary' %>
+                  <%= link_to "Delete", student_path(student.id), method: :delete, data: { confirm: 'Are you Sure?'} ,class: 'btn btn-primary' %>
+                </td>
+              </tr>
+              <% end  %>   
+            </tbody>
+          </table>
 
-<div class="container">
-<div class="row align-items-center" >
-    <div class="col">
-    <h3> Students Directory </h3>
+        </div>
+      </div>
+   </div>
 </div>
+<!-- Content Row -->
 
-<div class="row ">
+                   
+                   
 
-<table class="table table-bordered table-hover text-nowrap    table-responsive">
-        <thead>
-          <tr>
-            <th >Sr. No</th>
-            <th >Student Name</th>
-            <th >Student Email</th>
-            <th >Category</th>
-            <th >Age</th>
-            <th >Enrolled</th>
-            <th >Action</th>
-          </tr>
-        </thead>
-        <tbody>
-
-        <%   @students.each do |student|  %>
-          <tr>
-            <th scope="row"><%=student.id %></th>
-            <td><%=student.name %></td>
-            <td><%=student.email %></td>
-            <td><%=student.category %></td>
-            <td><%=student.age %></td>
-            <td><%=student.enrolled %></td>
-
-            <td>
-            
            
-            <%= link_to "Show" , student_path(student.id), class: 'btn btn-primary ' %>
-            <%= link_to "Edit", edit_student_path(student.id), class: 'btn btn-primary' %>
-            <%= link_to "Delete", student_path(student.id), method: :delete, data: { confirm: 'Are you Sure?'} ,class: 'btn btn-primary' %>
-            </td>
-          </tr>
-        <% end  %>   
-        </tbody>
-</table>
 
-</div>
-</div>
+
+ 
+
+                    

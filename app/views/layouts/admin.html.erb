@@ -16,15 +16,37 @@
 
   <!-- Page Wrapper -->
     <div id="wrapper">
- 
     
-
-
     <%= render 'layouts/sidebar' %>
 
-    </div>
+    <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
 
-     <%= yield %>
+        <!-- Main Content -->
+        <div id="content">
+
+        
+            <%= render 'layouts/topbar' %>
+
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                    <%= yield %>
+
+            </div>
+            <!-- End  Page Content /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+
+
+
+        <div>
+    <!-- End Content Wrapper -->
+
+
+
+    </div>
+    <!-- End Page Wrapper -->
+
   </body>
 </html>
 
