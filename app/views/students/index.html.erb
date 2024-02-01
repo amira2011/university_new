@@ -21,6 +21,7 @@
                 <th >Category</th>
                 <th >Age</th>
                 <th >Enrolled</th>
+                <th >Fees Paid</th>
                 <th >Action</th>
               </tr>
             </thead>
@@ -32,6 +33,7 @@
                 <th >Category</th>
                 <th >Age</th>
                 <th >Enrolled</th>
+                <th >Fees Paid</th>
                 <th >Action</th>
               </tr>
             </tfoot>
@@ -44,6 +46,7 @@
                 <td><%=student.category %></td>
                 <td><%=student.age %></td>
                 <td><%=student.enrolled %></td>
+                <td><%=student.fees_paid %></td>
                 <td>
                   <%= link_to "Show" , student_path(student.id), class: 'btn btn-primary ' %>
                   <%= link_to "Edit", edit_student_path(student.id), class: 'btn btn-primary' %>

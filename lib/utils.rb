@@ -141,5 +141,15 @@ class Utils
       end
 
 
+      def self.update_fees_paid
+
+        enrolled_students = Student.where(enrolled: true, fees_paid: nil)
+        enrolled_students.each do |student|
+          student.update_column(:fees_paid, 10000.00)
+         
+        end
+      end
+
+
 
 end
