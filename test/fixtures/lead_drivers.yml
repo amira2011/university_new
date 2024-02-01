@@ -1,0 +1,39 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  lead: one
+  first_name: MyString
+  last_name: MyString
+  relationship: MyString
+  gender: MyString
+  marital_status: MyString
+  birth_date: 2024-02-01
+  first_licensed: 1
+  education: MyString
+  credit_rating: MyString
+  bankruptcy: false
+  occupation: MyString
+  good_student: false
+  license_status: MyString
+  suspended_reason: MyString
+  license_state: MyString
+  sr_22: false
+
+two:
+  lead: two
+  first_name: MyString
+  last_name: MyString
+  relationship: MyString
+  gender: MyString
+  marital_status: MyString
+  birth_date: 2024-02-01
+  first_licensed: 1
+  education: MyString
+  credit_rating: MyString
+  bankruptcy: false
+  occupation: MyString
+  good_student: false
+  license_status: MyString
+  suspended_reason: MyString
+  license_state: MyString
+  sr_22: false

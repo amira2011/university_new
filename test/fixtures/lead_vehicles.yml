@@ -1,0 +1,35 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  lead: one
+  lead_driver: one
+  year: MyString
+  make: MyString
+  model: MyString
+  submodel: MyString
+  vin: MyString
+  alarm: false
+  primary_purpose: MyString
+  average_mileage: MyString
+  commute_days_per_week: 1
+  annual_mileage: MyString
+  ownership: MyString
+  collision: MyString
+  comprehensive: MyString
+
+two:
+  lead: two
+  lead_driver: two
+  year: MyString
+  make: MyString
+  model: MyString
+  submodel: MyString
+  vin: MyString
+  alarm: false
+  primary_purpose: MyString
+  average_mileage: MyString
+  commute_days_per_week: 1
+  annual_mileage: MyString
+  ownership: MyString
+  collision: MyString
+  comprehensive: MyString

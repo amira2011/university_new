@@ -2,6 +2,15 @@ class Student < ApplicationRecord
     paginates_per 10
     before_save { self.email = email.downcase }
 
+    before_save :set_fefault_fees_paid, if: :enrolled?
+    after_save :set_fees_paid, if: :enrolled?
+
+     
+  
+  
+
+
+
     VALID_CATEGORIES = ["open", "obc", "sc", "nt", "st", "other"]
     validates :category, inclusion: { in: VALID_CATEGORIES, message: "Invalid category" }
 
@@ -18,6 +27,20 @@ class Student < ApplicationRecord
     has_many :courses , :through => :student_courses
 
    
+
+    private
+  
+    def set_default_fees_paid
+      self.fees_paid = 10000.00
+    end
+
+    def set_fees_paid
+        update_column(:fees_paid, 10000.00)
+    end
+      
+
+
+
     def self.get_students(input)
         begin
             if input.is_a?(Hash)
