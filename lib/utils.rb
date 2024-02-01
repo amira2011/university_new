@@ -8,6 +8,7 @@ class Utils
 
     $data = nil
     include Math1
+    include InsuranceExchangeIntegration
     @@count = 0
     attr_accessor :first_name, :last_name
 
@@ -40,6 +41,7 @@ class Utils
 
        puts minus(10,20)
        puts multiply(10,20)
+       puts hello
 
     end
 
