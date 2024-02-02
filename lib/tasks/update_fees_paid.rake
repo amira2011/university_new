@@ -5,4 +5,5 @@ task :update_fees_paid => :environment do
   end
 
   puts 'Fees_paid updated for previously enrolled students.'
+  # rake update_fees_paid
 end
