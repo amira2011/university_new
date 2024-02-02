@@ -28,7 +28,7 @@ class Student < ApplicationRecord
 
    
 
-    private
+     
   
     def set_default_fees_paid
       self.fees_paid = 10000.00
@@ -38,8 +38,7 @@ class Student < ApplicationRecord
         update_column(:fees_paid, 10000.00)
     end
       
-
-
+ 
 
     def self.get_students(input)
         begin
