@@ -2,7 +2,7 @@ class Student < ApplicationRecord
     paginates_per 10
     before_save { self.email = email.downcase }
 
-    before_save :set_fefault_fees_paid, if: :enrolled?
+    before_save :set_default_fees_paid, if: :enrolled?
     after_save :set_fees_paid, if: :enrolled?
 
      
@@ -35,7 +35,8 @@ class Student < ApplicationRecord
     end
 
     def set_fees_paid
-        update_column(:fees_paid, 10000.00)
+       # update_column(:fees_paid, 10000.00)
+        update(fees_paid: 10000.00)
     end
       
  
@@ -64,6 +65,13 @@ class Student < ApplicationRecord
     end
 
 
+    def self.build_conditions(input, model)
+        keys = input.select { |key, _| model.column_names.map(&:to_sym).include?(key.to_sym) }
+        conditions = keys.map { |key, value| "#{model.table_name}.#{key} like '%#{value}%'" }.join(' OR ')
+
+        
+    end
+
     def self.get_students_hash(input)
         students = get_students(input)
         result = {}
@@ -72,14 +80,6 @@ class Student < ApplicationRecord
             result[student.id.to_s] = { "courses" => courses }
         end
         return result
-    end
-
-
-    def self.build_conditions(input, model)
-        keys = input.select { |key, _| model.column_names.map(&:to_sym).include?(key.to_sym) }
-        conditions = keys.map { |key, value| "#{model.table_name}.#{key} like '%#{value}%'" }.join(' OR ')
-
-        
     end
 
 end

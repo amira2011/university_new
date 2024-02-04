@@ -1,0 +1,4 @@
+{
+    "editor.defaultFormatter": "Shopify.ruby-lsp",
+    "editor.formatOnSave": true
+}

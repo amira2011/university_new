@@ -6,11 +6,11 @@ module InsuranceExchangeIntegration
 
    
 
-    def InsuranceExchangeIntegration.call_transfer()
+    def InsuranceExchangeIntegration.call_transfer(lead_id)
 
         api_token = "API" 
         placement_id = "ID"
-        data = { "zip" => "90210"}
+        data = generate_lead_json(lead_id)
         request_data = {
             api_token: api_token,
             placement_id: placement_id, 
@@ -22,6 +22,7 @@ module InsuranceExchangeIntegration
             data: data.to_json
         }
          
+        puts request_data
         uri = URI.parse("https://insurance-test.mediaalpha.com/call-transfers.json")
         http = Net::HTTP.new(uri.host, uri.port)
         http.use_ssl = true
@@ -52,6 +53,48 @@ module InsuranceExchangeIntegration
        
       
     end
+
+
+    
+
+
+
+
+
+
+    def InsuranceExchangeIntegration.generate_lead_json(lead_id)
+      
+      lead = Lead.includes(:lead_detail, :lead_vehicles, :lead_drivers, :lead_violations).find_by(id: lead_id)
+        if lead
+         lead_drivers = lead.lead_drivers
+      
+         if lead_drivers.present?
+          drivers_array = lead_drivers.map do |driver|
+            {
+              'marital_status' => LeadDriver.transform_marital_status_for_api(driver.marital_status)
+            }
+          end
+
+          custom_hash = {
+            zip: lead.zip,
+           # drivers: drivers_array
+
+          }
+    
+          # Convert the custom hash to JSON
+          final_json = custom_hash.to_json
+    
+          # Display the final JSON representation
+          puts final_json
+        else
+          puts 'LeadDrivers not found for the Lead in the database.'
+        end
+      else
+        puts 'Lead not found in the database.'
+      end
+    end
+    
+    
 
 
 end

@@ -12,7 +12,7 @@ class LeadDriver < ApplicationRecord
 }
 
   VALID_MARITAL_STATUS = ['Single', 'Married', 'Divorced', 'Separated', 'Widowed', 'Domestic Partner', 'Unknown']
-  validates :marital_status, inclusion: { in: VALID_MARITAL_STATUS, message: "Invalid Marital Status" }
+  #validates :marital_status, inclusion: { in: VALID_MARITAL_STATUS, message: "Invalid Marital Status" }
 
   def self.transform_marital_status_for_api(value)
     mapped_value = MARITAL_STATUS_MAPPING[value] || value

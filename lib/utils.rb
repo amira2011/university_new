@@ -153,5 +153,69 @@ class Utils
       end
 
 
+      def self.seed_leads
+        LeadDriver.destroy_all  
+        Lead.destroy_all
+        LeadDetail.destroy_all
+              100.times do
+              lead = Lead.create!(
+                first_name: Faker::Name.first_name,
+                last_name: Faker::Name.last_name,
+                email: Faker::Internet.email,
+                phone: Faker::PhoneNumber.phone_number,
+                address: Faker::Address.street_address,
+                address2: Faker::Address.secondary_address,
+                city: Faker::Address.city,
+                state: Faker::Address.state_abbr,
+                zip: Faker::Address.zip_code
+              )
+
+              # Seed lead details for each lead
+              lead_detail = LeadDetail.create!(
+                lead: lead,
+                home_garage: Faker::Boolean.boolean,
+                home_owner: Faker::Boolean.boolean,
+                home_length: Faker::Number.between(from: 1000, to: 5000),
+                interested_in_home_insurance: Faker::Boolean.boolean,
+                interested_in_condo_insurance: Faker::Boolean.boolean,
+                interested_in_life_insurance: Faker::Boolean.boolean,
+                interested_in_renters_insurance: Faker::Boolean.boolean,
+                interested_in_usage_based_policy: Faker::Boolean.boolean,
+                currently_insured: Faker::Boolean.boolean,
+                current_company: Faker::Company.name,
+                current_customer: Faker::Number.between(from: 1, to: 10),
+                continuous_coverage: Faker::Number.between(from: 1, to: 5),
+                current_policy_expiration_date: Faker::Date.between(from: Date.today, to: 1.year.from_now),
+                military_affiliation: Faker::Boolean.boolean
+              )
+
+              lead_driver = LeadDriver.create!(
+                lead: lead,
+                first_name: Faker::Name.first_name,
+                last_name: Faker::Name.last_name,
+                relationship: Faker::Lorem.word,
+                gender: Faker::Gender.binary_type,
+                marital_status: Faker::Demographic.marital_status,
+                birth_date: Faker::Date.between(from: 30.years.ago, to: 18.years.ago),
+                first_licensed: Faker::Number.between(from: 18, to: 30),
+                education: Faker::Educator.degree,
+                credit_rating: Faker::Business.credit_card_type,
+                bankruptcy: Faker::Boolean.boolean,
+                occupation: Faker::Job.title,
+                good_student: Faker::Boolean.boolean,
+                license_status: Faker::Lorem.word,
+                suspended_reason: Faker::Lorem.word,
+                license_state: Faker::Address.state_abbr,
+                sr_22: Faker::Boolean.boolean
+              )
+            end
+
+                puts "Seeded 100 leads with   successfully!"
+
+
+
+                  end
+
+
 
 end
