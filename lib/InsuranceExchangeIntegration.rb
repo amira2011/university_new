@@ -11,6 +11,7 @@ module InsuranceExchangeIntegration
         api_token = "API" 
         placement_id = "ID"
         data = generate_lead_json(lead_id)
+        puts data
         request_data = {
             api_token: api_token,
             placement_id: placement_id, 
@@ -19,7 +20,7 @@ module InsuranceExchangeIntegration
             local_hour: Time.now.hour, 
             url: "www.smartfinancial.com",
             ua_class: 'web', 
-            data: data.to_json
+            data: data
         }
          
         puts request_data
@@ -67,7 +68,7 @@ module InsuranceExchangeIntegration
       lead = Lead.includes(:lead_detail, :lead_drivers ).find_by(id: lead_id)
         if lead
          lead_drivers = lead.lead_drivers
-      
+          puts "in Lead"
          if lead_drivers.present?
           drivers_array = lead_drivers.map do |driver|
             {
@@ -77,15 +78,13 @@ module InsuranceExchangeIntegration
 
           custom_hash = {
             zip: lead.zip,
-           # drivers: drivers_array
-
-          }
+            drivers: drivers_array
+           }
     
-          # Convert the custom hash to JSON
-          final_json = custom_hash.to_json
+           
+          custom_hash
     
-          # Display the final JSON representation
-          puts final_json
+          
         else
           puts 'LeadDrivers not found for the Lead in the database.'
         end
