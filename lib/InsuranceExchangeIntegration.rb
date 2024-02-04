@@ -64,7 +64,7 @@ module InsuranceExchangeIntegration
 
     def InsuranceExchangeIntegration.generate_lead_json(lead_id)
       
-      lead = Lead.includes(:lead_detail, :lead_vehicles, :lead_drivers, :lead_violations).find_by(id: lead_id)
+      lead = Lead.includes(:lead_detail, :lead_drivers ).find_by(id: lead_id)
         if lead
          lead_drivers = lead.lead_drivers
       
