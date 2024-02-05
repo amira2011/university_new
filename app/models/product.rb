@@ -1,11 +1,11 @@
 class Product < ApplicationRecord
   self.table_name = "my_products"
- # after_initialize :do_something
- 
+  # after_initialize :do_something
+
   before_validation do
     puts "I am inside before validation"
   end
-    
+
   def do_something
     puts "You have initialized an object!"
   end
@@ -20,11 +20,8 @@ class Product < ApplicationRecord
 
   around_save do
     puts "I am inside around save"
-    yield 
+    yield
   end
-
- 
-
 
 =begin
 
@@ -55,5 +52,4 @@ class Product < ApplicationRecord
     puts "I am inside after rollback"
   end
 =end
-
 end

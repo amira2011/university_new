@@ -3,14 +3,37 @@ require "uri"
 require "json"
 
 module InsuranceExchangeIntegration
+  @possible_values = {
+    primary_purpose: ["Business", "Commute School", "Commute Varies", "Commute Work", "Farm", "Government", "Pleasure", "Other"],
+    ownership: ["finance", "lease", "own", "other"],
+    collision: ["50", "100", "250", "500", "1000", "2500"],
+    comprehensive: ["50", "100", "250", "500", "1000", "2500"],
+    relationship: ["self", "spouse", "parent", "sibling", "child", "grandparent", "grandchild", "domestic partner", "other"],
+    gender: ["M", "F", "X"],
+    marital_status: ["Single", "Married", "Divorced", "Separated", "Widowed", "Domestic Partner", "Unknown"],
+    education: ["None", "High School", "GED", "Incomplete", "Some College", "Vocational", "Associate", "Bachelor", "Master", "PhD", "Law", "Unknown", "Other Nonprofessional Degree", "Other Professional Degree"],
+    credit_rating: ["Excellent", "Good", "Average", "Below average", "Poor"],
+    occupation: ["Job1", "Job2", "Job3"],
+    license_status: ["Active", "Expired", "International", "Learner", "None", "Other", "Permit", "Probation", "Restricted", "Revoked", "Suspended", "Temporary"],
+    suspended_reason: ["Failure to pay ticket", "DUI", "Received too many tickets", "No insurance", "Other"],
+    incident_type: ["ticket", "dui", "accident", "claim", "suspension"],
+  }
+
+  def InsuranceExchangeIntegration.set_field_value(field, value)
+    if @possible_values.key?(field.to_sym)
+      if @possible_values[field.to_sym].include?(value)
+        value
+      else
+        "Other"
+      end
+    end
+  end
+
   def InsuranceExchangeIntegration.call_transfer(lead_id)
-    api_token = "API"
-    placement_id = "ID"
     data = generate_lead_json(lead_id)
-    puts data
     request_data = {
-      api_token: api_token,
-      placement_id: placement_id,
+      api_token: "API",
+      placement_id: "placement_id",
       version: 17,
       call_type: "Inbound",
       local_hour: Time.now.hour,
@@ -18,18 +41,12 @@ module InsuranceExchangeIntegration
       ua_class: "web",
       data: data,
     }
-
-    puts request_data
-    uri = URI.parse("https://insurance-test.mediaalpha.com/call-transfers.json")
-    http = Net::HTTP.new(uri.host, uri.port)
-    http.use_ssl = true
-
-    request = Net::HTTP::Post.new(uri.path, { "Content-Type" => "application/json" })
-    request.body = request_data.to_json
-
-    begin
-      response = http.request(request)
-
+    uri = URI("https://insurance-test.mediaalpha.com/call-transfers.json")
+    req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
+    req.body = request_data.to_json
+    puts req.body
+    Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") do |http|
+      response = http.request(req)
       if response.is_a?(Net::HTTPSuccess)
         response = JSON.parse(response.body)
         puts response
@@ -39,32 +56,15 @@ module InsuranceExchangeIntegration
       else
         puts "HTTP request failed with status #{response.code}"
       end
-    rescue StandardError => e
-      puts "An error occurred: #{e.message}"
     end
   end
 
   def InsuranceExchangeIntegration.generate_lead_json(lead_id)
     lead = Lead.includes(:lead_detail, :lead_drivers).find_by(id: lead_id)
     if lead
-      lead_drivers = lead.lead_drivers
-      puts "in Lead"
-      if lead_drivers.present?
-        drivers_array = lead_drivers.map do |driver|
-          {
-            "marital_status" => LeadDriver.transform_marital_status_for_api(driver.marital_status),
-          }
-        end
-
-        custom_hash = {
-          zip: lead.zip,
-          drivers: drivers_array,
-        }
-
-        custom_hash
-      else
-        puts "LeadDrivers not found for the Lead in the database."
-      end
+      custom_hash = {
+        zip: lead.zip,
+      }
     else
       puts "Lead not found in the database."
     end
