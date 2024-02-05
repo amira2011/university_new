@@ -1,7 +1,7 @@
 class CreateLeadViolations < ActiveRecord::Migration[7.1]
   def change
     create_table :lead_violations do |t|
-      t.string :type
+      t.string :violation_type
       t.references :lead_driver, null: false, foreign_key: true
       t.references :lead, null: false, foreign_key: true
       t.date :incident_date

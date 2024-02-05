@@ -2,7 +2,7 @@ class Student < ApplicationRecord
     paginates_per 10
     before_save { self.email = email.downcase }
 
-    before_save :set_default_fees_paid, if: :enrolled?
+  #  before_save :set_default_fees_paid, if: :enrolled?
     after_save :set_fees_paid, if: :enrolled?
 
      
@@ -35,8 +35,8 @@ class Student < ApplicationRecord
     end
 
     def set_fees_paid
-       # update_column(:fees_paid, 10000.00)
-        update(fees_paid: 10000.00)
+        update_column(:fees_paid, 10000.00)
+       # update(fees_paid: 10000.00)
     end
       
  

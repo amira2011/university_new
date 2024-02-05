@@ -8,46 +8,34 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-require 'faker'
- 
- 
+require "faker"
 
-   100.times do |i|
-      Student.create!(
-        name: Faker::Name.name,
-        email: Faker::Internet.email,
-        age: rand(18..25),
-        category: ["open", "obc", "sc", "nt", "st", "other"].sample,
-        enrolled: [true, false].sample,
-        password: "password"
-      )
-    end
+100.times do |i|
+  Student.create!(
+    name: Faker::Name.name,
+    email: Faker::Internet.email,
+    age: rand(18..25),
+    category: ["open", "obc", "sc", "nt", "st", "other"].sample,
+    enrolled: [true, false].sample,
+    password: "password",
+  )
+end
 
-    100.times do 
-      Course.create(
-        short_name: Faker::Educator.subject,
-        course_name: Faker::Educator.course_name, 
-        desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}"
-      )
-    end
+100.times do
+  Course.create(
+    short_name: Faker::Educator.subject,
+    course_name: Faker::Educator.course_name,
+    desc: "#{Faker::Educator.subject} #{Faker::Educator.course_name}",
+  )
+end
 
-    Student.all.each do |student|
-      StudentDetail.create(student_id: student.id,
-        address: Faker::Address.city,
-        zip: Faker::Address.zip,
-        emergency_contact: Faker::PhoneNumber.phone_number
-      )
-     
-    end
-      
-      
+Student.all.each do |student|
+  StudentDetail.create(student_id: student.id,
+                       address: Faker::Address.city,
+                       zip: Faker::Address.zip,
+                       emergency_contact: Faker::PhoneNumber.phone_number)
+end
 
-
-
-      # Randomly Allocate Student to Courses
-      # run Util.add_students_to_courses 
-      #
- 
- 
-
- 
+# Randomly Allocate Student to Courses
+# run Util.add_students_to_courses
+#

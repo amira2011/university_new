@@ -1,4 +1,7 @@
 {
     "editor.defaultFormatter": "Shopify.ruby-lsp",
-    "editor.formatOnSave": true
+    "editor.formatOnSave": true,
+    "[ruby]": {
+        "editor.defaultFormatter": "jnbt.vscode-rufo"
+    }
 }
