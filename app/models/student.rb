@@ -68,12 +68,8 @@ class Student < ApplicationRecord
   end
 
   def self.study
-    input = { name: "abid", age: 10, email: 25 }
-    #puts input.to_json
-    column_names = Student.column_names
-    puts column_names
-
-    keys = input.select { |key, | column_names.map(&:to_sym).include?(key.to_sym) }
-    puts keys
+    input = { name: "abid", age: 19, email1: "shaikh.abidali@gmail.com" }
+    keys = input.select { |key, value| Student.column_names.map(&:to_sym).include?(key) }
+    conditions = keys.map { |key, value| "#{Student.table_name}.#{key} like '%#{value}%'" }.join (" OR ")
   end
 end

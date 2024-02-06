@@ -32,7 +32,7 @@ module InsuranceExchangeIntegration
   def InsuranceExchangeIntegration.call_transfer(lead_id)
     data = generate_lead_json(lead_id)
     request_data = {
-      api_token: "",
+      api_token: "    ",
       placement_id: "",
       version: 17,
       #call_type: "Inbound",
@@ -60,10 +60,35 @@ module InsuranceExchangeIntegration
   end
 
   def InsuranceExchangeIntegration.generate_lead_json(lead_id)
-    lead = Lead.includes(:lead_detail, :lead_drivers).find_by(id: lead_id)
+    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
+    puts lead
     if lead
-      custom_hash = {
-        zip: lead.zip,
+      lead_data = {
+        "address": lead.address,
+        "address_2": lead.address2,
+        "continuous_coverage": lead.lead_detail.continuous_coverage,
+        "zip": lead.zip,
+        "current_company": lead.lead_detail.current_company,
+        "current_customer": lead.lead_detail.current_customer,
+        "currently_insured": lead.lead_detail.currently_insured,
+        "drivers": [],
+        "email": lead.email,
+        "home_garage": lead.lead_detail.home_garage,
+        "home_length": lead.lead_detail.home_length,
+        "home_ownership": lead.lead_detail.home_owner,
+        "incidents": [],
+        "interested_in_condo_insurance": lead.lead_detail.interested_in_condo_insurance,
+        "interested_in_home_insurance": lead.lead_detail.interested_in_home_insurance,
+        "interested_in_life_insurance": lead.lead_detail.interested_in_life_insurance,
+        "interested_in_renters_insurance": lead.lead_detail.interested_in_renters_insurance,
+        "interested_in_usage_based_policy": lead.lead_detail.interested_in_usage_based_policy,
+        "leadid_id": lead.id,
+
+        "military_affiliation": lead.lead_detail.military_affiliation,
+        "phone": lead.phone,
+
+        "vehicles": [],
+        "zip": lead.zip,
       }
     else
       puts "Lead not found in the database."
