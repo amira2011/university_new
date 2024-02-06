@@ -66,4 +66,14 @@ class Student < ApplicationRecord
     end
     return result
   end
+
+  def self.study
+    input = { name: "abid", age: 10, email: 25 }
+    #puts input.to_json
+    column_names = Student.column_names
+    puts column_names
+
+    keys = input.select { |key, | column_names.map(&:to_sym).include?(key.to_sym) }
+    puts keys
+  end
 end
