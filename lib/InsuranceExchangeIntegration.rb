@@ -71,6 +71,7 @@ module InsuranceExchangeIntegration
         "current_company": lead.lead_detail.current_company,
         "current_customer": lead.lead_detail.current_customer,
         "currently_insured": lead.lead_detail.currently_insured,
+        "vehicles": [],
         "drivers": [],
         "email": lead.email,
         "home_garage": lead.lead_detail.home_garage,
@@ -83,13 +84,42 @@ module InsuranceExchangeIntegration
         "interested_in_renters_insurance": lead.lead_detail.interested_in_renters_insurance,
         "interested_in_usage_based_policy": lead.lead_detail.interested_in_usage_based_policy,
         "leadid_id": lead.id,
-
         "military_affiliation": lead.lead_detail.military_affiliation,
         "phone": lead.phone,
-
-        "vehicles": [],
         "zip": lead.zip,
       }
+
+      # Populate 'vehicles' array
+      lead.lead_vehicles.each do |vehicle|
+        lead_data[:vehicles] << {
+          "year": vehicle.year,
+          "make": vehicle.make,
+          "model": vehicle.model,
+          "submodel": vehicle.submodel,
+          "vin": vehicle.vin,
+          "alarm": vehicle.alarm,
+          "primary_purpose": vehicle.primary_purpose,
+          "average_mileage": vehicle.average_mileage,
+          "commute_days_per_week": vehicle.commute_days_per_week,
+          "annual_mileage": vehicle.annual_mileage,
+          "ownership": vehicle.ownership,
+          "collision": vehicle.ownership,
+          "comprehensive": vehicle.ownership,
+        }
+      end
+
+      # Populate 'drivers' array
+      lead.lead_drivers.each do |driver|
+        lead_data[:drivers] << {
+          "bankruptcy": driver.bankruptcy,
+          "birth_date": driver.birth_date,
+          "credit_rating": driver.credit_rating,
+          "driver": "#{driver.first_name} #{driver.last_name}",
+
+        }
+      end
+
+      return lead_data
     else
       puts "Lead not found in the database."
     end
