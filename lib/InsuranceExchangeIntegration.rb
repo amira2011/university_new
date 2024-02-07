@@ -32,13 +32,13 @@ module InsuranceExchangeIntegration
   def InsuranceExchangeIntegration.call_transfer(lead_id)
     data = generate_lead_json(lead_id)
     request_data = {
-      api_token: "    ",
-      placement_id: "",
+      api_token: "API",
+      placement_id: "placement_id",
       version: 17,
-      #call_type: "Inbound",
-      #local_hour: Time.now.hour,
-      #url: "www.smartfinancial.com",
-      #ua_class: "web",
+      call_type: "Inbound",
+      local_hour: Time.now.hour,
+      url: "www.smartfinancial.com",
+      ua_class: "web",
       data: data,
     }
     uri = URI("https://insurance-test.mediaalpha.com/call-transfers.json")
