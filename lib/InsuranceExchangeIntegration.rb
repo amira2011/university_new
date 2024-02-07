@@ -3,6 +3,8 @@ require "uri"
 require "json"
 
 module InsuranceExchangeIntegration
+  valid_jason_fields = ["contact", "email", "phone", "address", "address_2", "zip", "Home", "home_garage", "home_ownership", "home_length", "interested_in_home_insurance", "interested_in_condo_insurance", "interested_in_life_insurance", "interested_in_renters_insurance", "interested_in_usage_based_policy", "year", "make", "submodel", "vin", "alarm", "primary_purpose", "primary_driver", "average_mileage", "commute_days_per_week", "annual_mileage", "current_mileage", "auto_warranty", "ownership", "collision", "comprehensive", "Drivers", "relationship", "driver", "gender", "marital_status", "birth_date", "first_licensed", "education", "primary_vehicle", "credit_rating", "bankruptcy", "occupation", "good_student", "license_status", "suspended_reason", "license_state", "sr_22", "Incidents", "type", "driver", "incident_date", "description", "what_damaged", "accident_at_fault", "claim_at_fault", "amount_paid", "liability_medical_paid", "dui_state", "Current Policy", "currently_insured", "current_company", "current_customer", "continuous_coverage", "current_policy_expires", "current_policy_premium", "military_affiliation", "Requested Coverage", "coverage_type", "bi_per_person", "bi_per_incident", "Targeting and Auditing", "mediaalpha_certificate_id", "leadid_id", "trusted_form_certificate_id", "score", "call_consent", "sms_consent", "email_consent", "text", "url"]
+
   @possible_values = {
     primary_purpose: ["Business", "Commute School", "Commute Varies", "Commute Work", "Farm", "Government", "Pleasure", "Other"],
     ownership: ["finance", "lease", "own", "other"],
