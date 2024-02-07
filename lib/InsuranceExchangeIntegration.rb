@@ -19,6 +19,46 @@ module InsuranceExchangeIntegration
     incident_type: ["ticket", "dui", "accident", "claim", "suspension"],
   }
 
+  @mapping = {
+
+    marital_status: {
+      "Happily Married" => "Married",
+      "Not Married" => "Single",
+      "breakup" => "Separated",
+      "dissolution" => "Divorced",
+    },
+
+  }
+
+  MARITAL_STATUS_MAPPING = {
+    "Happily Married" => "Married",
+    "Not Married" => "Single",
+    "breakup" => "Separated",
+    "dissolution" => "Divorced",
+  }
+
+  def self.transform_value_without_mapping(value, valid_values)
+    mapped_value = mapping[value] || value
+    valid_values.include?(mapped_value) ? mapped_value : valid_values.last
+  end
+
+  def self.transform_value_for_api(value, mapping, valid_values)
+    mapped_value = mapping[value] || value
+    valid_values.include?(mapped_value) ? mapped_value : valid_values.last
+  end
+
+  def self.test
+    transform_value_for_api("Singl1e", @mapping[:marital_status], @possible_values[:marital_status])
+  end
+
+  VALID_MARITAL_STATUS = ["Single", "Married", "Divorced", "Separated", "Widowed", "Domestic Partner", "Unknown"]
+  #validates :marital_status, inclusion: { in: VALID_MARITAL_STATUS, message: "Invalid Marital Status" }
+
+  def self.transform_marital_status_for_api(value)
+    mapped_value = MARITAL_STATUS_MAPPING[value] || value
+    VALID_MARITAL_STATUS.include?(mapped_value) ? mapped_value : "Unknown"
+  end
+
   def InsuranceExchangeIntegration.set_field_value(field, value)
     if @possible_values.key?(field.to_sym)
       if @possible_values[field.to_sym].include?(value)
@@ -29,30 +69,34 @@ module InsuranceExchangeIntegration
     end
   end
 
-  def InsuranceExchangeIntegration.call_transfer(lead_id)
-    data = generate_lead_json(lead_id)
+  def InsuranceExchangeIntegration.call_transfer()
+    #data = generate_lead_json(lead_id)
+
+    uri = URI("https://insurance-test.mediaalpha.com/backfill.json")
+    req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
+
     request_data = {
-      api_token: "API",
-      placement_id: "placement_id",
+      api_token: " ",
+      placement_id: " ",
       version: 17,
-      call_type: "Inbound",
+      ip: "43.227.22.66",
       local_hour: Time.now.hour,
       url: "www.smartfinancial.com",
+      ua: "ubuntu",
       ua_class: "web",
-      data: data,
+      data: {
+        "zip": "90210",
+      },
     }
-    uri = URI("https://insurance-test.mediaalpha.com/call-transfers.json")
-    req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
     req.body = request_data.to_json
     puts req.body
     Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") do |http|
       response = http.request(req)
       if response.is_a?(Net::HTTPSuccess)
         response = JSON.parse(response.body)
-        puts response
-        call_transfers = response["call_transfers"] if response.key?("call_transfers")
 
-        !call_transfers.nil? && call_transfers.length > 0
+        num_ads = response["num_ads"] if response.key?("num_ads")
+        puts num_ads
       else
         puts "HTTP request failed with status #{response.code}"
       end
@@ -86,7 +130,6 @@ module InsuranceExchangeIntegration
         "leadid_id": lead.id,
         "military_affiliation": lead.lead_detail.military_affiliation,
         "phone": lead.phone,
-        "zip": lead.zip,
       }
 
       # Populate 'vehicles' array
