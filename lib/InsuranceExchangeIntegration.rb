@@ -30,47 +30,21 @@ module InsuranceExchangeIntegration
 
   }
 
-  MARITAL_STATUS_MAPPING = {
-    "Happily Married" => "Married",
-    "Not Married" => "Single",
-    "breakup" => "Separated",
-    "dissolution" => "Divorced",
-  }
-
   def self.transform_value_without_mapping(value, valid_values)
-    mapped_value = mapping[value] || value
-    valid_values.include?(mapped_value) ? mapped_value : valid_values.last
+    valid_values.include?(value) ? value : valid_values.last
   end
 
-  def self.transform_value_for_api(value, mapping, valid_values)
+  def self.transform_value_with_mapping(value, mapping, valid_values)
     mapped_value = mapping[value] || value
     valid_values.include?(mapped_value) ? mapped_value : valid_values.last
   end
 
   def self.test
-    transform_value_for_api("Singl1e", @mapping[:marital_status], @possible_values[:marital_status])
+    puts @possible_values.keys
   end
 
-  VALID_MARITAL_STATUS = ["Single", "Married", "Divorced", "Separated", "Widowed", "Domestic Partner", "Unknown"]
-  #validates :marital_status, inclusion: { in: VALID_MARITAL_STATUS, message: "Invalid Marital Status" }
-
-  def self.transform_marital_status_for_api(value)
-    mapped_value = MARITAL_STATUS_MAPPING[value] || value
-    VALID_MARITAL_STATUS.include?(mapped_value) ? mapped_value : "Unknown"
-  end
-
-  def InsuranceExchangeIntegration.set_field_value(field, value)
-    if @possible_values.key?(field.to_sym)
-      if @possible_values[field.to_sym].include?(value)
-        value
-      else
-        "Other"
-      end
-    end
-  end
-
-  def InsuranceExchangeIntegration.call_transfer()
-    #data = generate_lead_json(lead_id)
+  def InsuranceExchangeIntegration.call_transfer(lead_id)
+    data = generate_lead_json(lead_id)
 
     uri = URI("https://insurance-test.mediaalpha.com/backfill.json")
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
@@ -79,26 +53,36 @@ module InsuranceExchangeIntegration
       api_token: " ",
       placement_id: " ",
       version: 17,
-      ip: "43.227.22.66",
+      ip: "103.199.192.255",
       local_hour: Time.now.hour,
       url: "www.smartfinancial.com",
       ua: "ubuntu",
       ua_class: "web",
-      data: {
-        "zip": "90210",
-      },
+      data: data,
     }
     req.body = request_data.to_json
-    puts req.body
     Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") do |http|
       response = http.request(req)
       if response.is_a?(Net::HTTPSuccess)
         response = JSON.parse(response.body)
-
-        num_ads = response["num_ads"] if response.key?("num_ads")
+        ads_array = response["ads"] if response.key?("ads")
+        num_ads = response["num_ads"].to_i if response.key?("num_ads")
+        if num_ads > 0 && ads_array.is_a?(Array)
+          # Iterate through each ad in the "ads" array
+          ads_array.each do |ad|
+            puts "Ad carrier: #{ad["carrier"]}"
+            puts "Ad ID: #{ad["ad_id"]}"
+            puts "Headline: #{ad["headline"]}"
+            puts "Display URL: #{ad["display_url"]}"
+          end
+        else
+          puts "No ads or invalid ads array in the response."
+        end
         puts num_ads
+        num_ads > 0
       else
         puts "HTTP request failed with status #{response.code}"
+        false
       end
     end
   end
@@ -141,11 +125,11 @@ module InsuranceExchangeIntegration
           "submodel": vehicle.submodel,
           "vin": vehicle.vin,
           "alarm": vehicle.alarm,
-          "primary_purpose": vehicle.primary_purpose,
+          "primary_purpose": transform_value_without_mapping(vehicle.primary_purpose, @possible_values[:primary_purpose]),
           "average_mileage": vehicle.average_mileage,
           "commute_days_per_week": vehicle.commute_days_per_week,
           "annual_mileage": vehicle.annual_mileage,
-          "ownership": vehicle.ownership,
+          "ownership": transform_value_without_mapping(vehicle.ownership, @possible_values[:ownership]),
           "collision": vehicle.ownership,
           "comprehensive": vehicle.ownership,
         }
@@ -158,6 +142,7 @@ module InsuranceExchangeIntegration
           "birth_date": driver.birth_date,
           "credit_rating": driver.credit_rating,
           "driver": "#{driver.first_name} #{driver.last_name}",
+          "marital_status": transform_value_with_mapping(driver.marital_status, @mapping[:marital_status], @possible_values[:marital_status]),
 
         }
       end
