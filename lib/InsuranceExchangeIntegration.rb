@@ -50,8 +50,8 @@ module InsuranceExchangeIntegration
     req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
 
     request_data = {
-      api_token: " ",
-      placement_id: " ",
+      api_token: "API",
+      placement_id: "Placement",
       version: 17,
       ip: "103.199.192.255",
       local_hour: Time.now.hour,
