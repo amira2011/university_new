@@ -49,8 +49,8 @@ module InsuranceExchangeIntegration
     data
   end
 
-  def self.test
-    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: Lead.first.id)
+  def self.generate_lead_json_new(lead_id)
+    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
 
     data = {
       "contact": lead.contact,
@@ -69,7 +69,7 @@ module InsuranceExchangeIntegration
       data[:vehicles] << build_hash(vehicle)
     end
 
-    puts data
+    data
   end
 
   def self.transform_value_without_mapping(value, valid_values)
