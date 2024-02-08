@@ -32,6 +32,50 @@ module InsuranceExchangeIntegration
 
   }
 
+  def self.test
+    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: Lead.first.id)
+
+    data = {}
+
+    Lead.column_names.each do |column|
+      if @valid_jason_fields.map(&:to_sym).include?(column.to_sym)
+        data[column.to_sym] = lead[column]
+      end
+      # if @possible_values.keys.include?(column.to_sym)
+      #   data[column.to_sym] = transform_value_without_mapping(lead[column], @possible_values[:"#{column}"])
+      # elsif  @valid_jason_fields
+      #   data[column.to_sym] = lead[column]
+      # end
+    end
+    LeadDetail.column_names.each do |column|
+      if @valid_jason_fields.map(&:to_sym).include?(column.to_sym)
+        data[column.to_sym] = lead.lead_detail[column]
+      end
+      # if @possible_values.keys.include?(column.to_sym)
+      #   data[column.to_sym] = transform_value_without_mapping(lead[column], @possible_values[:"#{column}"])
+      # elsif  @valid_jason_fields
+      #   data[column.to_sym] = lead[column]
+      # end
+    end
+
+    puts data
+
+    # Lead.column_names.each do |column|
+    #   if @possible_values.keys.include?(column.to_sym)
+    #     puts column
+    #     puts @possible_values[:"#{column}"]
+    #   end
+    # end
+
+    # LeadDriver.column_names.each do |column|
+    #   if @possible_values.keys.include?(column.to_sym)
+    #     puts column
+    #     puts @possible_values[:"#{column}"]
+    #   end
+    # end
+    "ok"
+  end
+
   def self.transform_value_without_mapping(value, valid_values)
     valid_values.include?(value) ? value : valid_values.last
   end
