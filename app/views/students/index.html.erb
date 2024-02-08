@@ -38,25 +38,25 @@
               </tr>
             </tfoot>
             <tbody>
-              <% @students.each_with_index do |student, idx|  %>
+              <% @students.each_with_index do |student, idx| %>
               <tr>
                 <td scope="row"><%= student.id %></td>
-                <td><%=student.name %></td>
-                <td><%=student.email %></td>
-                <td><%=student.category %></td>
-                <td><%=student.age %></td>
-                <td><%=student.enrolled %></td>
-                <td><%=student.fees_paid %></td>
+                <td><%= student.name %></td>
+                <td><%= student.email %></td>
+                <td><%= student.category %></td>
+                <td><%= student.age %></td>
+                <td><%= student.enrolled %></td>
+                <td><%= student.fees_paid %></td>
                 <td>
-                  <%= link_to "Show" , student_path(student.id), class: 'btn btn-primary ' %>
-                  <%= link_to "Edit", edit_student_path(student.id), class: 'btn btn-primary' %>
-                  <%= link_to "Delete", student_path(student.id), method: :delete, data: { confirm: 'Are you Sure?'} ,class: 'btn btn-primary' %>
+                  <%= link_to "Show", student_path(student.id), class: "btn btn-primary " %>
+                  <%= link_to "Edit", edit_student_path(student.id), class: "btn btn-primary" %>
+                  <%= link_to "Delete", student_path(student.id), method: :delete, data: { confirm: "Are you Sure?" }, class: "btn btn-primary" %>
                 </td>
               </tr>
-              <% end  %>   
+              <% end %>   
             </tbody>
           </table>
-          <%= paginate @students , theme: 'bootstrap-5' %>  
+          <%= paginate @students, theme: "bootstrap-5" %>  
         </div>
       </div>
    </div>

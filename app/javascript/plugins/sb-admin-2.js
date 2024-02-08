@@ -2,7 +2,6 @@
   "use strict"; // Start of use strict
 console.log("in admin js")
 
-$('#dataTable').DataTable();
 
 
   // Toggle the side navigation
