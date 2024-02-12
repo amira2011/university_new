@@ -51,7 +51,7 @@ module InsuranceExchangeIntegration
 
   def self.generate_lead_json_new(lead_id)
     lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
-
+    return {} unless lead # Return an empty hash if the lead is not found
     data = {
       "contact": lead.contact,
       "vehicles": [],
