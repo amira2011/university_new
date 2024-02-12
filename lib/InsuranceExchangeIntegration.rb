@@ -32,15 +32,15 @@ module InsuranceExchangeIntegration
 
   }
 
-  def self.build_hash(model)
+  def self.build_hash(model, valid_jason_fields, mapping, possible_values)
     data = {}
     model.class.column_names.each do |column|
-      if @valid_jason_fields.map(&:to_sym).include?(column.to_sym)
-        if @mapping.keys.include?(column.to_sym)
-          mapped_value = @mapping[column.to_sym][model[column]] || model[column]
-          data[column.to_sym] = @possible_values[column.to_sym].include?(mapped_value) ? mapped_value : @possible_values[column.to_sym].last
-        elsif @possible_values.keys.include?(column.to_sym)
-          data[column.to_sym] = @possible_values[column.to_sym].include?(model[column]) ? model[column] : @possible_values[column.to_sym].last
+      if valid_jason_fields.map(&:to_sym).include?(column.to_sym)
+        if mapping.keys.include?(column.to_sym)
+          mapped_value = mapping[column.to_sym][model[column]] || model[column]
+          data[column.to_sym] = possible_values[column.to_sym].include?(mapped_value) ? mapped_value : possible_values[column.to_sym].last
+        elsif possible_values.keys.include?(column.to_sym)
+          data[column.to_sym] = possible_values[column.to_sym].include?(model[column]) ? model[column] : possible_values[column.to_sym].last
         else
           data[column.to_sym] = model[column]
         end
@@ -58,15 +58,15 @@ module InsuranceExchangeIntegration
       "drivers": [],
     }
 
-    data.merge!(build_hash(lead))
-    data.merge!(build_hash(lead.lead_detail))
+    data.merge!(build_hash(lead, @valid_jason_fields, @mapping, @possible_values))
+    data.merge!(build_hash(lead.lead_detail, @valid_jason_fields, @mapping, @possible_values))
 
     lead.lead_drivers.each do |driver|
-      data[:drivers] << build_hash(driver)
+      data[:drivers] << build_hash(driver, @valid_jason_fields, @mapping, @possible_values)
     end
 
     lead.lead_vehicles.each do |vehicle|
-      data[:vehicles] << build_hash(vehicle)
+      data[:vehicles] << build_hash(vehicle, @valid_jason_fields, @mapping, @possible_values)
     end
 
     data
