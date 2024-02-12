@@ -200,7 +200,10 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_05_122654) do
     t.string "emergency_contact"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["address"], name: "index_student_details_on_address"
+    t.index ["emergency_contact"], name: "index_student_details_on_emergency_contact"
     t.index ["student_id"], name: "index_student_details_on_student_id"
+    t.index ["zip"], name: "index_new_on_zip"
     t.index ["zip"], name: "index_student_details_on_zip"
   end
 
@@ -215,7 +218,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_05_122654) do
     t.boolean "enrolled"
     t.string "address"
     t.decimal "fees_paid", precision: 10, scale: 2
+    t.index ["category"], name: "index_new_on_category"
     t.index ["category"], name: "index_students_on_category"
+    t.index ["email"], name: "index_new_on_email"
     t.index ["email"], name: "index_students_on_email"
   end
 

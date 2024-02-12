@@ -13,7 +13,6 @@ gem "sprockets-rails"
 
 gem "mysql2"
 
-
 # Use the Puma web server [https://github.com/puma/puma]
 gem "puma", ">= 5.0"
 
@@ -29,28 +28,25 @@ gem "stimulus-rails"
 # Build JSON APIs with ease [https://github.com/rails/jbuilder]
 gem "jbuilder"
 
-gem 'faker'
-
+gem "faker"
 
 # Use jquery as the JavaScript librar
-gem 'jquery-rails'
+gem "jquery-rails"
 
 # Use jquery-ui for pretty UI
-gem 'jquery-ui-rails'
-
+gem "jquery-ui-rails"
 
 gem "bootstrap"
 
 gem "sassc-rails"
 
+gem "libv8"
 
-gem 'libv8'
+gem "nokogiri", "1.16.0", :require => false
 
-gem 'nokogiri', '1.16.0', :require => false
+gem "kaminari"
 
-gem 'kaminari'
-
-gem 'bootstrap5-kaminari-views'
+gem "bootstrap5-kaminari-views"
 
 # Use Redis adapter to run Action Cable in production
 # gem "redis", ">= 4.0.1"
@@ -73,6 +69,7 @@ gem "bootsnap", require: false
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mswin mswin64 mingw x64_mingw ]
+  gem "rspec-rails", "~> 6.1.0"
 end
 
 group :development do
