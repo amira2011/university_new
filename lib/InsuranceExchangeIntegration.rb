@@ -3,9 +3,9 @@ require "uri"
 require "json"
 
 module InsuranceExchangeIntegration
-  @valid_jason_fields = ["contact", "email", "phone", "address", "address_2", "zip", "Home", "home_garage", "home_ownership", "home_length", "interested_in_home_insurance", "interested_in_condo_insurance", "interested_in_life_insurance", "interested_in_renters_insurance", "interested_in_usage_based_policy", "year", "make", "submodel", "vin", "alarm", "primary_purpose", "primary_driver", "average_mileage", "commute_days_per_week", "annual_mileage", "current_mileage", "auto_warranty", "ownership", "collision", "comprehensive", "Drivers", "relationship", "driver", "gender", "marital_status", "birth_date", "first_licensed", "education", "primary_vehicle", "credit_rating", "bankruptcy", "occupation", "good_student", "license_status", "suspended_reason", "license_state", "sr_22", "Incidents", "type", "driver", "incident_date", "description", "what_damaged", "accident_at_fault", "claim_at_fault", "amount_paid", "liability_medical_paid", "dui_state", "Current Policy", "currently_insured", "current_company", "current_customer", "continuous_coverage", "current_policy_expires", "current_policy_premium", "military_affiliation", "Requested Coverage", "coverage_type", "bi_per_person", "bi_per_incident", "Targeting and Auditing", "mediaalpha_certificate_id", "leadid_id", "trusted_form_certificate_id", "score", "call_consent", "sms_consent", "email_consent", "text", "url"]
+  @mediaalpha_jason_fields = ["contact", "email", "phone", "address", "address_2", "zip", "Home", "home_garage", "home_ownership", "home_length", "interested_in_home_insurance", "interested_in_condo_insurance", "interested_in_life_insurance", "interested_in_renters_insurance", "interested_in_usage_based_policy", "year", "make", "submodel", "vin", "alarm", "primary_purpose", "primary_driver", "average_mileage", "commute_days_per_week", "annual_mileage", "current_mileage", "auto_warranty", "ownership", "collision", "comprehensive", "Drivers", "relationship", "driver", "gender", "marital_status", "birth_date", "first_licensed", "education", "primary_vehicle", "credit_rating", "bankruptcy", "occupation", "good_student", "license_status", "suspended_reason", "license_state", "sr_22", "Incidents", "type", "driver", "incident_date", "description", "what_damaged", "accident_at_fault", "claim_at_fault", "amount_paid", "liability_medical_paid", "dui_state", "Current Policy", "currently_insured", "current_company", "current_customer", "continuous_coverage", "current_policy_expires", "current_policy_premium", "military_affiliation", "Requested Coverage", "coverage_type", "bi_per_person", "bi_per_incident", "Targeting and Auditing", "mediaalpha_certificate_id", "leadid_id", "trusted_form_certificate_id", "score", "call_consent", "sms_consent", "email_consent", "text", "url"]
 
-  @possible_values = {
+  @mediaalpha_possible_values = {
     primary_purpose: ["Business", "Commute School", "Commute Varies", "Commute Work", "Farm", "Government", "Pleasure", "Other"],
     ownership: ["finance", "lease", "own", "other"],
     collision: ["50", "100", "250", "500", "1000", "2500"],
@@ -21,7 +21,7 @@ module InsuranceExchangeIntegration
     incident_type: ["ticket", "dui", "accident", "claim", "suspension"],
   }
 
-  @mapping = {
+  @mediaalpha_mapping = {
 
     marital_status: {
       "Happily Married" => "Married",
@@ -58,15 +58,15 @@ module InsuranceExchangeIntegration
       "drivers": [],
     }
 
-    data.merge!(build_hash(lead, @valid_jason_fields, @mapping, @possible_values))
-    data.merge!(build_hash(lead.lead_detail, @valid_jason_fields, @mapping, @possible_values))
+    data.merge!(build_hash(lead, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
+    data.merge!(build_hash(lead.lead_detail, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
 
     lead.lead_drivers.each do |driver|
-      data[:drivers] << build_hash(driver, @valid_jason_fields, @mapping, @possible_values)
+      data[:drivers] << build_hash(driver, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
     end
 
     lead.lead_vehicles.each do |vehicle|
-      data[:vehicles] << build_hash(vehicle, @valid_jason_fields, @mapping, @possible_values)
+      data[:vehicles] << build_hash(vehicle, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
     end
 
     data
@@ -164,11 +164,11 @@ module InsuranceExchangeIntegration
           "submodel": vehicle.submodel,
           "vin": vehicle.vin,
           "alarm": vehicle.alarm,
-          "primary_purpose": transform_value_without_mapping(vehicle.primary_purpose, @possible_values[:primary_purpose]),
+          "primary_purpose": transform_value_without_mapping(vehicle.primary_purpose, @mediaalpha_possible_values[:primary_purpose]),
           "average_mileage": vehicle.average_mileage,
           "commute_days_per_week": vehicle.commute_days_per_week,
           "annual_mileage": vehicle.annual_mileage,
-          "ownership": transform_value_without_mapping(vehicle.ownership, @possible_values[:ownership]),
+          "ownership": transform_value_without_mapping(vehicle.ownership, @mediaalpha_possible_values[:ownership]),
           "collision": vehicle.ownership,
           "comprehensive": vehicle.ownership,
         }
@@ -181,7 +181,7 @@ module InsuranceExchangeIntegration
           "birth_date": driver.birth_date,
           "credit_rating": driver.credit_rating,
           "driver": "#{driver.first_name} #{driver.last_name}",
-          "marital_status": transform_value_with_mapping(driver.marital_status, @mapping[:marital_status], @possible_values[:marital_status]),
+          "marital_status": transform_value_with_mapping(driver.marital_status, @mediaalpha_mapping[:marital_status], @mediaalpha_possible_values[:marital_status]),
 
         }
       end
