@@ -150,15 +150,6 @@ module InsuranceExchangeIntegration
     end
   end
 
-  def self.transform_value_without_mapping(value, valid_values)
-    valid_values.include?(value) ? value : valid_values.last
-  end
-
-  def self.transform_value_with_mapping(value, mapping, valid_values)
-    mapped_value = mapping[value] || value
-    valid_values.include?(mapped_value) ? mapped_value : valid_values.last
-  end
-
   def self.call_transfer(lead_id)
     begin
       data = generate_lead_json_new(lead_id)
