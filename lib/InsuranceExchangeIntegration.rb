@@ -102,42 +102,56 @@ module InsuranceExchangeIntegration
 
   def self.build_hash(model, valid_jason_fields, mapping, possible_values)
     data = {}
-    model.class.column_names.each do |column|
-      if valid_jason_fields.map(&:to_sym).include?(column.to_sym)
-        if mapping.keys.include?(column.to_sym)
-          mapped_value = mapping[column.to_sym][model[column]] || model[column]
-          data[column.to_sym] = possible_values[column.to_sym].include?(mapped_value) ? mapped_value : possible_values[column.to_sym].last
-        elsif possible_values.keys.include?(column.to_sym)
-          data[column.to_sym] = possible_values[column.to_sym].include?(model[column]) ? model[column] : possible_values[column.to_sym].last
-        else
-          data[column.to_sym] = model[column]
+
+    begin
+      model.class.column_names.each do |column|
+        if valid_json_fields.map(&:to_sym).include?(column.to_sym)
+          if mapping.keys.include?(column.to_sym)
+            mapped_value = mapping[column.to_sym][model[column]] || model[column]
+            data[column.to_sym] = possible_values[column.to_sym].include?(mapped_value) ? mapped_value : possible_values[column.to_sym].last
+          elsif possible_values.keys.include?(column.to_sym)
+            data[column.to_sym] = possible_values[column.to_sym].include?(model[column]) ? model[column] : possible_values[column.to_sym].last
+          else
+            data[column.to_sym] = model[column]
+          end
         end
       end
+    rescue StandardError => e
+      puts "An unexpected error occurred while building the hash: #{e.message}"
     end
+
     data
   end
 
   def self.generate_lead_json_new(lead_id)
-    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
-    return {} unless lead # Return an empty hash if the lead is not found
-    data = {
-      "contact": lead.contact,
-      "vehicles": [],
-      "drivers": [],
-    }
+    begin
+      lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
+      return {} unless lead # Return an empty hash if the lead is not found
+      data = {
+        "contact": lead.contact,
+        "vehicles": [],
+        "drivers": [],
+      }
 
-    data.merge!(build_hash(lead, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
-    data.merge!(build_hash(lead.lead_detail, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
+      data.merge!(build_hash(lead, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
+      data.merge!(build_hash(lead.lead_detail, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values))
 
-    lead.lead_drivers.each do |driver|
-      data[:drivers] << build_hash(driver, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
+      lead.lead_drivers.each do |driver|
+        data[:drivers] << build_hash(driver, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
+      end
+
+      lead.lead_vehicles.each do |vehicle|
+        data[:vehicles] << build_hash(vehicle, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
+      end
+
+      data
+    rescue ActiveRecord::RecordNotFound => e
+      puts "Lead with ID #{lead_id} not found: #{e.message}"
+      return {}
+    rescue StandardError => e
+      puts "An unexpected error occurred while retrieving the lead: #{e.message}"
+      return {}
     end
-
-    lead.lead_vehicles.each do |vehicle|
-      data[:vehicles] << build_hash(vehicle, @mediaalpha_jason_fields, @mediaalpha_mapping, @mediaalpha_possible_values)
-    end
-
-    data
   end
 
   def self.transform_value_without_mapping(value, valid_values)
@@ -149,114 +163,54 @@ module InsuranceExchangeIntegration
     valid_values.include?(mapped_value) ? mapped_value : valid_values.last
   end
 
-  def InsuranceExchangeIntegration.call_transfer(lead_id)
-    data = generate_lead_json(lead_id)
+  def self.call_transfer(lead_id)
+    begin
+      data = generate_lead_json(lead_id)
 
-    uri = URI("https://insurance-test.mediaalpha.com/backfill.json")
-    req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
+      uri = URI("https://insurance-test.mediaalpha.com/backfill.json")
+      req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
 
-    request_data = {
-      api_token: "API",
-      placement_id: "Placement",
-      version: 17,
-      ip: "103.199.192.255",
-      local_hour: Time.now.hour,
-      url: "www.smartfinancial.com",
-      ua: "ubuntu",
-      ua_class: "web",
-      data: data,
-    }
-    req.body = request_data.to_json
-    Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") do |http|
-      response = http.request(req)
-      if response.is_a?(Net::HTTPSuccess)
-        response = JSON.parse(response.body)
-        ads_array = response["ads"] if response.key?("ads")
-        num_ads = response["num_ads"].to_i if response.key?("num_ads")
-        if num_ads > 0 && ads_array.is_a?(Array)
-          # Iterate through each ad in the "ads" array
-          ads_array.each do |ad|
-            puts "Ad carrier: #{ad["carrier"]}"
-            puts "Ad ID: #{ad["ad_id"]}"
-            puts "Headline: #{ad["headline"]}"
-            puts "Display URL: #{ad["display_url"]}"
-          end
-        else
-          puts "No ads or invalid ads array in the response."
-        end
-        puts num_ads
-        num_ads > 0
-      else
-        puts "HTTP request failed with status #{response.code}"
-        false
-      end
-    end
-  end
-
-  def InsuranceExchangeIntegration.generate_lead_json(lead_id)
-    lead = Lead.includes(:lead_detail, :lead_drivers, :lead_vehicles, :lead_violations).find_by(id: lead_id)
-    puts lead
-    if lead
-      lead_data = {
-        "contact": lead.contact,
-        "address": lead.address,
-        "address_2": lead.address2,
-        "continuous_coverage": lead.lead_detail.continuous_coverage,
-        "zip": lead.zip,
-        "current_company": lead.lead_detail.current_company,
-        "current_customer": lead.lead_detail.current_customer,
-        "currently_insured": lead.lead_detail.currently_insured,
-        "vehicles": [],
-        "drivers": [],
-        "email": lead.email,
-        "home_garage": lead.lead_detail.home_garage,
-        "home_length": lead.lead_detail.home_length,
-        "home_ownership": lead.lead_detail.home_owner,
-        "incidents": [],
-        "interested_in_condo_insurance": lead.lead_detail.interested_in_condo_insurance,
-        "interested_in_home_insurance": lead.lead_detail.interested_in_home_insurance,
-        "interested_in_life_insurance": lead.lead_detail.interested_in_life_insurance,
-        "interested_in_renters_insurance": lead.lead_detail.interested_in_renters_insurance,
-        "interested_in_usage_based_policy": lead.lead_detail.interested_in_usage_based_policy,
-        "leadid_id": lead.id,
-        "military_affiliation": lead.lead_detail.military_affiliation,
-        "phone": lead.phone,
+      request_data = {
+        api_token: "API",
+        placement_id: "Placement",
+        version: 17,
+        ip: "103.199.192.255",
+        local_hour: Time.now.hour,
+        url: "www.smartfinancial.com",
+        ua: "ubuntu",
+        ua_class: "web",
+        data: data,
       }
-
-      # Populate 'vehicles' array
-      lead.lead_vehicles.each do |vehicle|
-        lead_data[:vehicles] << {
-          "year": vehicle.year,
-          "make": vehicle.make,
-          "model": vehicle.model,
-          "submodel": vehicle.submodel,
-          "vin": vehicle.vin,
-          "alarm": vehicle.alarm,
-          "primary_purpose": transform_value_without_mapping(vehicle.primary_purpose, @mediaalpha_possible_values[:primary_purpose]),
-          "average_mileage": vehicle.average_mileage,
-          "commute_days_per_week": vehicle.commute_days_per_week,
-          "annual_mileage": vehicle.annual_mileage,
-          "ownership": transform_value_without_mapping(vehicle.ownership, @mediaalpha_possible_values[:ownership]),
-          "collision": vehicle.ownership,
-          "comprehensive": vehicle.ownership,
-        }
+      req.body = request_data.to_json
+      Net::HTTP.start(uri.hostname, uri.port, :use_ssl => uri.scheme == "https") do |http|
+        response = http.request(req)
+        if response.is_a?(Net::HTTPSuccess)
+          response = JSON.parse(response.body)
+          ads_array = response["ads"] if response.key?("ads")
+          num_ads = response["num_ads"].to_i if response.key?("num_ads")
+          if num_ads && num_ads > 0 && ads_array.is_a?(Array)
+            ads_array.each do |ad|
+              puts "Ad carrier: #{ad["carrier"]}"
+              puts "Ad ID: #{ad["ad_id"]}"
+              puts "Headline: #{ad["headline"]}"
+              puts "Display URL: #{ad["display_url"]}"
+            end
+          else
+            puts "No ads or invalid ads array in the response."
+          end
+          puts num_ads
+          num_ads > 0
+        else
+          puts "HTTP request failed with status #{response.code}"
+          false
+        end
       end
-
-      # Populate 'drivers' array
-      lead.lead_drivers.each do |driver|
-        lead_data[:drivers] << {
-          "bankruptcy": driver.bankruptcy,
-          "birth_date": driver.birth_date,
-          "credit_rating": driver.credit_rating,
-          "driver": "#{driver.first_name} #{driver.last_name}",
-          "marital_status": transform_value_with_mapping(driver.marital_status, @mediaalpha_mapping[:marital_status], @mediaalpha_possible_values[:marital_status]),
-
-        }
-      end
-
-      return lead_data
-    else
-      puts "Lead not found in the database."
+    rescue JSON::ParserError => e
+      puts "Error parsing JSON response: #{e.message}"
+      return false
+    rescue Net::HTTPError, StandardError => e
+      puts "An unexpected error occurred during the HTTP request: #{e.message}"
+      return false
     end
   end
 end
