@@ -100,24 +100,20 @@ module InsuranceExchangeIntegration
     },
   }
 
-  def self.build_hash(model, valid_jason_fields, mapping, possible_values)
+  def self.build_hash(model, valid_json_fields, mapping, possible_values)
     data = {}
 
-    begin
-      model.class.column_names.each do |column|
-        if valid_json_fields.map(&:to_sym).include?(column.to_sym)
-          if mapping.keys.include?(column.to_sym)
-            mapped_value = mapping[column.to_sym][model[column]] || model[column]
-            data[column.to_sym] = possible_values[column.to_sym].include?(mapped_value) ? mapped_value : possible_values[column.to_sym].last
-          elsif possible_values.keys.include?(column.to_sym)
-            data[column.to_sym] = possible_values[column.to_sym].include?(model[column]) ? model[column] : possible_values[column.to_sym].last
-          else
-            data[column.to_sym] = model[column]
-          end
+    model.class.column_names.each do |column|
+      if valid_json_fields.map(&:to_sym).include?(column.to_sym)
+        if mapping.keys.include?(column.to_sym)
+          mapped_value = mapping[column.to_sym][model[column]] || model[column]
+          data[column.to_sym] = possible_values[column.to_sym].include?(mapped_value) ? mapped_value : possible_values[column.to_sym].last
+        elsif possible_values.keys.include?(column.to_sym)
+          data[column.to_sym] = possible_values[column.to_sym].include?(model[column]) ? model[column] : possible_values[column.to_sym].last
+        else
+          data[column.to_sym] = model[column]
         end
       end
-    rescue StandardError => e
-      puts "An unexpected error occurred while building the hash: #{e.message}"
     end
 
     data
@@ -165,14 +161,14 @@ module InsuranceExchangeIntegration
 
   def self.call_transfer(lead_id)
     begin
-      data = generate_lead_json(lead_id)
+      data = generate_lead_json_new(lead_id)
 
       uri = URI("https://insurance-test.mediaalpha.com/backfill.json")
       req = Net::HTTP::Post.new(uri, "Content-Type" => "application/json")
 
       request_data = {
-        api_token: "API",
-        placement_id: "Placement",
+        api_token: Rails.application.credentials.dig(:mediaalpha, :api_token),
+        placement_id: Rails.application.credentials.dig(:mediaalpha, :placement_id),
         version: 17,
         ip: "103.199.192.255",
         local_hour: Time.now.hour,
@@ -197,6 +193,7 @@ module InsuranceExchangeIntegration
             end
           else
             puts "No ads or invalid ads array in the response."
+            return false
           end
           puts num_ads
           num_ads > 0
