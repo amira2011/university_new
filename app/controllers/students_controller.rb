@@ -1,75 +1,57 @@
 class StudentsController < ApplicationController
-layout 'admin'
-def index
-@students= Student.all.page(params[:page])
-end
+  layout "admin"
 
-def new
+  def index
+    @students = Student.all.page(params[:page])
+  end
 
-@student= Student.new
+  def new
+    @student = Student.new
+  end
 
+  def show
+    @student = Student.find(params[:id])
+  end
 
-end
+  def edit
+    @student = Student.find(params[:id])
+  end
 
-def show
-
-    @student= Student.find(params[:id])
-end
-
-
-def edit
-
-@student= Student.find(params[:id])
-end
-
-
-def update
-
-    @student= Student.find(params[:id])
+  def update
+    @student = Student.find(params[:id])
     if @student.update(student_params)
-        redirect_to student_path(@student)
-    else 
-        render 'edit'
+      redirect_to student_path(@student)
+    else
+      render "edit"
     end
+  end
 
-end
+  def delete
+  end
 
-
-def delete
-
-
-end
-
-
-def destroy
-    @student= Student.find(params[:id])
-    if  @student.destroy
-        redirect_to students_path
+  def destroy
+    @student = Student.find(params[:id])
+    if @student.destroy
+      redirect_to students_path
     end
+  end
 
-end
+  def create
+    @student = Student.new(student_params)
+    if @student.save
+      UserMailer.welcome_email(@student).deliver_now
 
-def create
- 
-    @student= Student.new(student_params)
-    if @student.save 
-        UserMailer.welcome_email(@student).deliver_now
+      flash[:success] = "You have Successfully Signed Up"
+      #redirect_to root_path
 
-        flash[:success]="You have Successfully Signed Up"
-        #redirect_to root_path
+    else
+      render "new", status: :unprocessable_entity
+    end
+  end
 
-     else
-        render 'new', status: :unprocessable_entity
-     end   
-end
+  private
 
-private
-
-def student_params
-
+  def student_params
     params.require(:student).permit(:name, :email, :password)
-
-end
-
-
+  end
 end

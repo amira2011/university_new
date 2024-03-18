@@ -31,17 +31,17 @@
 <%= form_for @student do |f| %>
     <div class="form-group">
       <%= f.label :name %>
-      <%= f.text_field :name , class: 'form-control' , id: 'studentname', placeholder: 'Enter Name' %>  
+      <%= f.text_field :name, class: "form-control", id: "studentname", placeholder: "Enter Name" %>  
     </div>
     <div class="form-group">
        <%= f.label :email %>
-       <%= f.email_field :email, class: 'form-control' , id: 'studentemail', placeholder: 'Enter Email' %>  
+       <%= f.email_field :email, class: "form-control", id: "studentemail", placeholder: "Enter Email" %>  
        </div>
 
-       <% if  @student.new_record? %>
+       <% if @student.new_record? %>
        <div class="form-group">
        <%= f.label :password %>
-       <%= f.password_field :password, class: 'form-control' , id: 'studentpass', placeholder: 'Choose Password' %>  
+       <%= f.password_field :password, class: "form-control", id: "studentpass", placeholder: "Choose Password" %>  
        
     </div>
 
@@ -49,14 +49,9 @@
 
   <% end %>
     <div class="p-2">
-    <%= f.submit( @student.new_record? ? "Sign Up" : "Edit Profile",  class: "btn btn-primary") %> 
+    <%= f.submit(@student.new_record? ? "Sign Up" : "Edit Profile", class: "btn btn-primary") %> 
     </div>
     <% end %>
 </div>
-
-  
-  
-
-  
 
   
